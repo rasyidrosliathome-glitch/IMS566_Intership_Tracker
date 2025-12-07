@@ -39,9 +39,7 @@
   * **JavaScript** (ES6+)
   * **Framework:** [Bootstrap 5.3](https://getbootstrap.com/)
   * **Icons:** [Font Awesome 6.4](https://fontawesome.com/)
-  * **Charts:**
-      * [Chart.js](https://www.chartjs.org/)
-      * [ApexCharts](https://apexcharts.com/)
+  * **Charts:** * [Chart.js](https://www.chartjs.org/) & * [ApexCharts](https://apexcharts.com/)
   * **Animations:** [Animate.css](https://animate.style/)
 
 -----
@@ -123,4 +121,5 @@ To reset the application data to defaults:
 This project is open-source and available for educational purposes.
 
 © 2025 Internship Tracker Malaysia.
+
 
