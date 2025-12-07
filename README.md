@@ -27,7 +27,6 @@ This is a responsive web application built for IMS566 Advanced Web Design Develo
 2. Use the following credentials to login:
    - Username: `student`
    - Password: `12345`
-3. Alternatively, you can register a new account
 
 ## Deployment
 
@@ -35,5 +34,6 @@ This project is deployed using GitHub Pages. You can access the live version at:
 (https://rasyidrosliathome-glitch.github.io/IMS566_Intership_Tracker/)
 
 ## Project Structure
+
 
 
