@@ -32,6 +32,7 @@ This is a responsive web application built for IMS566 Advanced Web Design Develo
 ## Deployment
 
 This project is deployed using GitHub Pages. You can access the live version at:
-https://[your-username].github.io/internship-tracker/
+[https://[your-username].github.io/internship-tracker/](https://rasyidrosliathome-glitch.github.io/IMS566_Intership_Tracker/)
 
 ## Project Structure
+
