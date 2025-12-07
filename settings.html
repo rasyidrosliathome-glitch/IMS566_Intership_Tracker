@@ -1,0 +1,1076 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Internship Tracker - Settings</title>
+    <!-- Bootstrap 5 CSS -->
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+    <!-- Font Awesome -->
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+    />
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="css/style.css" />
+    <link rel="stylesheet" href="css/theme.css" />
+    <!-- Animate.css -->
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"
+    />
+
+    <style>
+      /* Notification & Profile icon sizing */
+      #notificationsBtn i,
+      .profile-btn i {
+        font-size: 1.4rem; /* slightly bigger icon */
+        line-height: 1;
+        vertical-align: middle;
+      }
+
+      #notificationsBtn,
+      .profile-btn {
+        padding: 6px 10px; /* slightly larger click target */
+      }
+
+      /* Slightly smaller on small screens */
+      @media (max-width: 576px) {
+        #notificationsBtn i,
+        .profile-btn i {
+          font-size: 1.2rem;
+        }
+      }
+
+      /* Sidebar Styles */
+      .sidebar {
+        position: fixed;
+        top: 0;
+        left: -280px;
+        width: 280px;
+        height: 100vh;
+        background: #fff;
+        box-shadow: 4px 0 10px rgba(0, 0, 0, 0.1);
+        transition: left 0.3s ease;
+        z-index: 1050;
+        overflow-y: auto;
+      }
+
+      .sidebar.active {
+        left: 0;
+      }
+
+      .sidebar-header {
+        padding: 20px;
+        border-bottom: 1px solid #e0e0e0;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+      }
+
+      .sidebar-header h4 {
+        margin: 0;
+        color: #333;
+        font-weight: 600;
+      }
+
+      .sidebar-close {
+        background: none;
+        border: none;
+        font-size: 24px;
+        cursor: pointer;
+        color: #666;
+      }
+
+      .sidebar-menu {
+        padding: 20px 0;
+      }
+
+      .sidebar-menu-item {
+        padding: 15px 25px;
+        display: flex;
+        align-items: center;
+        color: #333;
+        text-decoration: none;
+        transition: all 0.3s ease;
+        border-left: 3px solid transparent;
+      }
+
+      .sidebar-menu-item:hover {
+        background: #f8f9fa;
+        border-left-color: #4e73df;
+        color: #4e73df;
+      }
+
+      .sidebar-menu-item.active {
+        background: #e7f1ff;
+        border-left-color: #4e73df;
+        color: #4e73df;
+        font-weight: 600;
+      }
+
+      .sidebar-menu-item i {
+        width: 25px;
+        margin-right: 15px;
+        font-size: 18px;
+      }
+
+      .sidebar-divider {
+        margin: 10px 25px;
+        border-top: 1px solid #e0e0e0;
+      }
+
+      .sidebar-overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.5);
+        display: none;
+        z-index: 1040;
+      }
+
+      .sidebar-overlay.active {
+        display: block;
+      }
+
+      /* Theme Toggle Switch */
+      .theme-switch-wrapper {
+        display: flex;
+        align-items: center;
+        padding: 15px 25px;
+      }
+
+      .theme-switch {
+        position: relative;
+        display: inline-block;
+        width: 50px;
+        height: 24px;
+        margin-right: 10px;
+      }
+
+      .theme-switch input {
+        opacity: 0;
+        width: 0;
+        height: 0;
+      }
+
+      .slider {
+        position: absolute;
+        cursor: pointer;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background-color: #ccc;
+        transition: 0.4s;
+        border-radius: 24px;
+      }
+
+      .slider:before {
+        position: absolute;
+        content: "";
+        height: 18px;
+        width: 18px;
+        left: 3px;
+        bottom: 3px;
+        background-color: white;
+        transition: 0.4s;
+        border-radius: 50%;
+      }
+
+      input:checked + .slider {
+        background-color: #4e73df;
+      }
+
+      input:checked + .slider:before {
+        transform: translateX(26px);
+      }
+
+      /* Hamburger Menu Button */
+      .menu-toggle {
+        background: none;
+        border: none;
+        font-size: 24px;
+        cursor: pointer;
+        color: #fff;
+        padding: 5px 10px;
+      }
+
+      .navbar-clean {
+        padding: 15px 0;
+      }
+
+      /* Dark Mode Styles */
+      body.dark-mode {
+        background-color: #1a1a1a;
+        color: #e0e0e0;
+      }
+
+      body.dark-mode .sidebar {
+        background: #2d2d2d;
+      }
+
+      body.dark-mode .sidebar-header {
+        border-bottom-color: #444;
+      }
+
+      body.dark-mode .sidebar-header h4 {
+        color: #e0e0e0;
+      }
+
+      body.dark-mode .sidebar-close {
+        color: #e0e0e0;
+      }
+
+      body.dark-mode .sidebar-menu-item {
+        color: #e0e0e0;
+      }
+
+      body.dark-mode .sidebar-menu-item:hover {
+        background: #3a3a3a;
+      }
+
+      body.dark-mode .sidebar-menu-item.active {
+        background: #1e3a5f;
+      }
+
+      body.dark-mode .sidebar-divider {
+        border-top-color: #444;
+      }
+
+      body.dark-mode .card {
+        background: rgba(45, 45, 45, 0.95);
+        color: #e0e0e0;
+      }
+
+      /* Ensure card bodies and list groups inside settings follow dark mode */
+      body.dark-mode .card-body,
+      body.dark-mode .list-group,
+      body.dark-mode .list-group .list-group-item,
+      body.dark-mode .list-group .list-group-item.active {
+        background: rgba(45, 45, 45, 0.95) !important;
+        color: #e0e0e0 !important;
+        border-color: #444 !important;
+      }
+
+      body.dark-mode .navbar {
+        background: #2d2d2d !important;
+      }
+
+      body.dark-mode .form-control {
+        background: #2d2d2d;
+        color: #e0e0e0;
+        border-color: #444;
+      }
+
+      body.dark-mode .text-muted {
+        color: #999 !important;
+      }
+    </style>
+  </head>
+
+  <body>
+    <!-- Sidebar Overlay -->
+    <div class="sidebar-overlay" id="sidebarOverlay"></div>
+
+    <!-- Sidebar Menu -->
+    <div class="sidebar" id="sidebar">
+      <div class="sidebar-header">
+        <h4><i class="fas fa-briefcase me-2"></i>Menu</h4>
+        <button class="sidebar-close" id="sidebarClose">
+          <i class="fas fa-times"></i>
+        </button>
+      </div>
+
+      <div class="sidebar-menu">
+        <!-- Sidebar User -->
+        <div class="sidebar-user">
+          <img src="images/zizanrazak.jpg" alt="Zizan Razak" />
+          <div class="user-info">
+            <strong>Hi, Zizan Razak!</strong>
+            <div class="muted">Welcome back</div>
+          </div>
+        </div>
+
+        <!-- Quick Access Section -->
+        <div
+          style="
+            padding: 10px 25px;
+            font-size: 12px;
+            color: #999;
+            text-transform: uppercase;
+            font-weight: 600;
+          "
+        >
+          Quick Access
+        </div>
+
+        <a href="profile.html" class="sidebar-menu-item">
+          <i class="fas fa-user"></i>
+          <span>Student Profile</span>
+        </a>
+
+        <div class="sidebar-divider"></div>
+
+        <!-- Main Navigation -->
+        <a href="dashboard.html" class="sidebar-menu-item">
+          <i class="fas fa-tachometer-alt"></i>
+          <span>Dashboard</span>
+        </a>
+
+        <a href="internships.html" class="sidebar-menu-item">
+          <i class="fas fa-file-alt"></i>
+          <span>My Internships</span>
+        </a>
+
+        <a href="companies.html" class="sidebar-menu-item">
+          <i class="fas fa-building"></i>
+          <span>Companies</span>
+        </a>
+
+        <div class="sidebar-divider"></div>
+
+        <!-- Settings -->
+        <a href="settings.html" class="sidebar-menu-item active">
+          <i class="fas fa-cog"></i>
+          <span>Settings</span>
+        </a>
+
+        <div class="sidebar-divider"></div>
+
+        <!-- Theme Toggle -->
+        <div class="theme-switch-wrapper">
+          <label class="theme-switch">
+            <input type="checkbox" id="themeToggle" />
+            <span class="slider"></span>
+          </label>
+          <span id="themeLabel">Dark Mode</span>
+        </div>
+
+        <div class="sidebar-divider"></div>
+
+        <!-- Logout -->
+        <a href="index.html" class="sidebar-menu-item text-danger">
+          <i class="fas fa-sign-out-alt"></i>
+          <span>Logout</span>
+        </a>
+      </div>
+    </div>
+
+    <!-- Clean Navigation Header -->
+    <nav
+      class="navbar navbar-expand-lg navbar-dark bg-gradient-nav navbar-clean"
+    >
+      <div class="container d-flex align-items-center">
+        <button id="menuToggle" class="menu-toggle me-2">
+          <i class="fas fa-bars"></i>
+        </button>
+        <a class="navbar-brand ms-1" href="dashboard.html">
+          <img
+            src="images/internship.png"
+            alt="Internship Tracker"
+            class="site-logo"
+          />
+        </a>
+        <div class="ms-auto d-flex align-items-center">
+          <button
+            id="notificationsBtn"
+            class="btn btn-link text-white me-2"
+            title="Notifications"
+          >
+            <i class="fas fa-bell"></i>
+          </button>
+          <a
+            href="profile.html"
+            class="btn btn-link text-white d-flex align-items-center"
+            title="Profile"
+            ><i class="fas fa-user-circle fa-lg"></i
+          ></a>
+        </div>
+      </div>
+    </nav>
+
+    <div class="container my-4">
+      <h1 class="text-gradient mb-4"><i class="fas fa-cog"></i> Settings</h1>
+
+      <div class="row">
+        <div class="col-md-3">
+          <div class="card-body p-0">
+            <div class="list-group list-group-flush">
+              <a
+                href="#account"
+                class="list-group-item list-group-item-action active"
+                data-bs-toggle="list"
+              >
+                <i class="fas fa-user-cog me-2"></i> Account Settings
+              </a>
+              <a
+                href="#notifications"
+                class="list-group-item list-group-item-action"
+                data-bs-toggle="list"
+              >
+                <i class="fas fa-bell me-2"></i> Notifications
+              </a>
+              <a
+                href="#privacy"
+                class="list-group-item list-group-item-action"
+                data-bs-toggle="list"
+              >
+                <i class="fas fa-shield-alt me-2"></i> Privacy & Security
+              </a>
+              <a
+                href="#appearance"
+                class="list-group-item list-group-item-action"
+                data-bs-toggle="list"
+              >
+                <i class="fas fa-palette me-2"></i> Appearance
+              </a>
+            </div>
+          </div>
+        </div>
+
+        <div class="col-md-9">
+          <!-- Settings Content -->
+          <div class="tab-content">
+            <!-- Account Settings -->
+            <div class="tab-pane fade show active" id="account">
+              <div class="card shadow-sm">
+                <div class="card-header bg-gradient-nav text-white">
+                  <h5 class="mb-0">
+                    <i class="fas fa-user-cog"></i> Account Settings
+                  </h5>
+                </div>
+                <div class="card-body">
+                  <form id="accountForm">
+                    <div class="mb-3">
+                      <label class="form-label">Username</label>
+                      <input
+                        type="text"
+                        class="form-control"
+                        value="student"
+                        readonly
+                      />
+                    </div>
+                    <div class="mb-3">
+                      <label class="form-label">Email Address</label>
+                      <input
+                        type="email"
+                        class="form-control"
+                        value="student@gmail.com"
+                        readonly
+                      />
+                    </div>
+                    <div class="mb-3">
+                      <label class="form-label">Language</label>
+                      <select class="form-select">
+                        <option selected>English</option>
+                        <option>Malay (Bahasa Malaysia)</option>
+                        <option>Chinese (中文)</option>
+                        <option>Tamil (தமிழ்)</option>
+                      </select>
+                    </div>
+                    <button type="submit" class="btn btn-gradient">
+                      <i class="fas fa-save"></i> Save Changes
+                    </button>
+                  </form>
+                </div>
+              </div>
+            </div>
+
+            <!-- Notifications -->
+            <div class="tab-pane fade" id="notifications">
+              <div class="card shadow-sm">
+                <div class="card-header bg-gradient-nav text-white">
+                  <h5 class="mb-0">
+                    <i class="fas fa-bell"></i> Notification Settings
+                  </h5>
+                </div>
+                <div class="card-body">
+                  <form id="notificationForm">
+                    <div class="mb-3">
+                      <div class="form-check form-switch mb-2">
+                        <input
+                          class="form-check-input"
+                          type="checkbox"
+                          id="emailNotifications"
+                          checked
+                        />
+                        <label
+                          class="form-check-label"
+                          for="emailNotifications"
+                        >
+                          Email Notifications
+                        </label>
+                      </div>
+                      <div class="form-check form-switch mb-2">
+                        <input
+                          class="form-check-input"
+                          type="checkbox"
+                          id="applicationUpdates"
+                          checked
+                        />
+                        <label
+                          class="form-check-label"
+                          for="applicationUpdates"
+                        >
+                          Application Status Updates
+                        </label>
+                      </div>
+                      <div class="form-check form-switch mb-2">
+                        <input
+                          class="form-check-input"
+                          type="checkbox"
+                          id="interviewReminders"
+                          checked
+                        />
+                        <label
+                          class="form-check-label"
+                          for="interviewReminders"
+                        >
+                          Interview Reminders
+                        </label>
+                      </div>
+                      <div class="form-check form-switch mb-2">
+                        <input
+                          class="form-check-input"
+                          type="checkbox"
+                          id="deadlineAlerts"
+                          checked
+                        />
+                        <label class="form-check-label" for="deadlineAlerts">
+                          Application Deadline Alerts
+                        </label>
+                      </div>
+                      <div class="form-check form-switch">
+                        <input
+                          class="form-check-input"
+                          type="checkbox"
+                          id="weeklyDigest"
+                        />
+                        <label class="form-check-label" for="weeklyDigest">
+                          Weekly Digest Email
+                        </label>
+                      </div>
+                    </div>
+                    <div class="mb-3">
+                      <label class="form-label">Notification Frequency</label>
+                      <select class="form-select">
+                        <option selected>Real-time</option>
+                        <option>Daily Summary</option>
+                        <option>Weekly Summary</option>
+                      </select>
+                    </div>
+                    <button type="submit" class="btn btn-gradient">
+                      <i class="fas fa-save"></i> Save Preferences
+                    </button>
+                  </form>
+                </div>
+              </div>
+            </div>
+
+            <!-- Privacy & Security -->
+            <div class="tab-pane fade" id="privacy">
+              <div class="card shadow-sm">
+                <div class="card-header bg-gradient-nav text-white">
+                  <h5 class="mb-0">
+                    <i class="fas fa-shield-alt"></i> Privacy & Security
+                  </h5>
+                </div>
+                <div class="card-body">
+                  <form id="privacyForm">
+                    <div class="mb-3">
+                      <label class="form-label">Change Password</label>
+                      <input
+                        type="password"
+                        class="form-control mb-2"
+                        placeholder="Current Password"
+                      />
+                      <input
+                        type="password"
+                        class="form-control mb-2"
+                        placeholder="New Password"
+                      />
+                      <input
+                        type="password"
+                        class="form-control"
+                        placeholder="Confirm New Password"
+                      />
+                    </div>
+                    <div class="mb-3">
+                      <div class="form-check mb-2">
+                        <input
+                          class="form-check-input"
+                          type="checkbox"
+                          id="twoFactorAuth"
+                        />
+                        <label class="form-check-label" for="twoFactorAuth">
+                          Enable Two-Factor Authentication
+                        </label>
+                      </div>
+                      <div class="form-check mb-2">
+                        <input
+                          class="form-check-input"
+                          type="checkbox"
+                          id="showProfile"
+                          checked
+                        />
+                        <label class="form-check-label" for="showProfile">
+                          Show my profile to employers
+                        </label>
+                      </div>
+                      <div class="form-check">
+                        <input
+                          class="form-check-input"
+                          type="checkbox"
+                          id="dataSharing"
+                        />
+                        <label class="form-check-label" for="dataSharing">
+                          Allow data sharing for analytics (anonymous)
+                        </label>
+                      </div>
+                    </div>
+                    <button type="submit" class="btn btn-gradient">
+                      <i class="fas fa-save"></i> Update Security Settings
+                    </button>
+                  </form>
+                </div>
+              </div>
+            </div>
+
+            <!-- Appearance -->
+            <div class="tab-pane fade" id="appearance">
+              <div class="card shadow-sm">
+                <div class="card-header bg-gradient-nav text-white">
+                  <h5 class="mb-0">
+                    <i class="fas fa-palette"></i> Appearance Settings
+                  </h5>
+                </div>
+                <div class="card-body">
+                  <form id="appearanceForm">
+                    <div class="mb-3">
+                      <label class="form-label">Theme</label>
+                      <div class="d-flex gap-3">
+                        <div class="form-check">
+                          <input
+                            class="form-check-input"
+                            type="radio"
+                            name="theme"
+                            id="lightTheme"
+                          />
+                          <label class="form-check-label" for="lightTheme">
+                            <i class="fas fa-sun text-warning"></i> Light Mode
+                          </label>
+                        </div>
+                        <div class="form-check">
+                          <input
+                            class="form-check-input"
+                            type="radio"
+                            name="theme"
+                            id="darkTheme"
+                          />
+                          <label class="form-check-label" for="darkTheme">
+                            <i class="fas fa-moon text-info"></i> Dark Mode
+                          </label>
+                        </div>
+                        <div class="form-check">
+                          <input
+                            class="form-check-input"
+                            type="radio"
+                            name="theme"
+                            id="autoTheme"
+                          />
+                          <label class="form-check-label" for="autoTheme">
+                            <i class="fas fa-adjust"></i> Auto
+                          </label>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="mb-3">
+                      <label class="form-label">Accent Color</label>
+                      <div class="d-flex gap-2">
+                        <button
+                          type="button"
+                          class="btn btn-primary rounded-circle color-option"
+                          data-color="primary"
+                        ></button>
+                        <button
+                          type="button"
+                          class="btn btn-success rounded-circle color-option"
+                          data-color="success"
+                        ></button>
+                        <button
+                          type="button"
+                          class="btn btn-info rounded-circle color-option"
+                          data-color="info"
+                        ></button>
+                        <button
+                          type="button"
+                          class="btn btn-warning rounded-circle color-option"
+                          data-color="warning"
+                        ></button>
+                        <button
+                          type="button"
+                          class="btn btn-danger rounded-circle color-option"
+                          data-color="danger"
+                        ></button>
+                      </div>
+                    </div>
+                    <div class="mb-3">
+                      <label class="form-label">Font Size</label>
+                      <select class="form-select">
+                        <option>Small</option>
+                        <option selected>Normal</option>
+                        <option>Large</option>
+                        <option>Extra Large</option>
+                      </select>
+                    </div>
+                    <div class="mb-3">
+                      <label class="form-label"
+                        >Background Overlay (Light / Dark)</label
+                      >
+                      <div class="row g-2">
+                        <div class="col-12 mb-2">
+                          <label for="overlayLight" class="form-label small"
+                            >Light mode overlay:
+                            <strong id="overlayLightValInline"
+                              >30%</strong
+                            ></label
+                          >
+                          <input
+                            type="range"
+                            id="overlayLight"
+                            min="0"
+                            max="1"
+                            step="0.01"
+                            value="0.3"
+                            class="form-range"
+                          />
+                        </div>
+                        <div class="col-12">
+                          <label for="overlayDark" class="form-label small"
+                            >Dark mode overlay:
+                            <strong id="overlayDarkValInline"
+                              >60%</strong
+                            ></label
+                          >
+                          <input
+                            type="range"
+                            id="overlayDark"
+                            min="0"
+                            max="1"
+                            step="0.01"
+                            value="0.6"
+                            class="form-range"
+                          />
+                        </div>
+                      </div>
+                    </div>
+                    <button type="submit" class="btn btn-gradient">
+                      <i class="fas fa-save"></i> Apply Changes
+                    </button>
+                  </form>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="footer mt-5 py-4">
+      <div class="container">
+        <div class="row">
+          <div class="col-md-6">
+            <h5>Internship Tracker Malaysia</h5>
+            <p>Track and manage your internship applications effectively.</p>
+            <div class="social-icons">
+              <a
+                href="https://www.facebook.com"
+                target="_blank"
+                class="text-decoration-none me-3"
+              >
+                <i class="fab fa-facebook fa-2x"></i>
+              </a>
+              <a
+                href="https://www.twitter.com"
+                target="_blank"
+                class="text-decoration-none me-3"
+              >
+                <i class="fab fa-twitter fa-2x"></i>
+              </a>
+              <a
+                href="https://www.linkedin.com"
+                target="_blank"
+                class="text-decoration-none me-3"
+              >
+                <i class="fab fa-linkedin fa-2x"></i>
+              </a>
+              <a
+                href="https://www.instagram.com"
+                target="_blank"
+                class="text-decoration-none"
+              >
+                <i class="fab fa-instagram fa-2x"></i>
+              </a>
+            </div>
+          </div>
+          <div class="col-md-3">
+            <h5>Quick Links</h5>
+            <ul class="list-unstyled">
+              <li>
+                <a href="dashboard.html" class="text-decoration-none"
+                  ><i class="fas fa-chevron-right"></i> Dashboard</a
+                >
+              </li>
+              <li>
+                <a href="internships.html" class="text-decoration-none"
+                  ><i class="fas fa-chevron-right"></i> My Internships</a
+                >
+              </li>
+              <li>
+                <a href="companies.html" class="text-decoration-none"
+                  ><i class="fas fa-chevron-right"></i> Companies</a
+                >
+              </li>
+              <li>
+                <a href="profile.html" class="text-decoration-none"
+                  ><i class="fas fa-chevron-right"></i> Profile</a
+                >
+              </li>
+              <li>
+                <a href="settings.html" class="text-decoration-none"
+                  ><i class="fas fa-chevron-right"></i> Settings</a
+                >
+              </li>
+            </ul>
+          </div>
+          <div class="col-md-3">
+            <h5>Contact</h5>
+            <ul class="list-unstyled">
+              <li>
+                <i class="fas fa-envelope"></i> support@internshiptracker.com.my
+              </li>
+              <li><i class="fas fa-phone"></i> +60 3-1234 5678</li>
+              <li>
+                <i class="fas fa-map-marker-alt"></i> Kuala Lumpur, Malaysia
+              </li>
+            </ul>
+          </div>
+        </div>
+        <div class="row mt-3">
+          <div class="col-12 text-center">
+            <div class="tricolor-footer mx-auto">
+              <div class="color-bar blue"></div>
+              <div class="color-bar silver"></div>
+              <div class="color-bar red"></div>
+            </div>
+            <p class="mb-0 mt-2">
+              &copy; 2025 Internship Tracker Malaysia. All rights reserved.
+            </p>
+          </div>
+        </div>
+      </div>
+    </footer>
+
+    <!-- Bootstrap 5 JS Bundle with Popper -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- Custom JS -->
+    <script src="js/script.js"></script>
+    <script>
+      // Background overlay settings UI
+      (function () {
+        const lightInput = document.getElementById("overlayLight");
+        const darkInput = document.getElementById("overlayDark");
+        // support both inline labels or legacy labels
+        const lightVal =
+          document.getElementById("overlayLightVal") ||
+          document.getElementById("overlayLightValInline");
+        const darkVal =
+          document.getElementById("overlayDarkVal") ||
+          document.getElementById("overlayDarkValInline");
+        const resetBtn = document.getElementById("resetOverlayBtn");
+        const root = document.documentElement;
+
+        function setLight(alpha) {
+          root.style.setProperty(
+            "--bg-overlay-light",
+            `rgba(255,255,255,${alpha})`,
+          );
+          localStorage.setItem("overlayLightAlpha", alpha);
+          if (lightVal) lightVal.textContent = Math.round(alpha * 100) + "%";
+        }
+
+        function setDark(alpha) {
+          root.style.setProperty("--bg-overlay-dark", `rgba(0,0,0,${alpha})`);
+          localStorage.setItem("overlayDarkAlpha", alpha);
+          if (darkVal) darkVal.textContent = Math.round(alpha * 100) + "%";
+        }
+
+        // initialize from saved values or defaults
+        const savedLight =
+          parseFloat(localStorage.getItem("overlayLightAlpha")) || 0.3;
+        const savedDark =
+          parseFloat(localStorage.getItem("overlayDarkAlpha")) || 0.6;
+        if (lightInput) {
+          lightInput.value = savedLight;
+          setLight(savedLight);
+          lightInput.addEventListener("input", (e) => setLight(e.target.value));
+        }
+        if (darkInput) {
+          darkInput.value = savedDark;
+          setDark(savedDark);
+          darkInput.addEventListener("input", (e) => setDark(e.target.value));
+        }
+
+        if (resetBtn) {
+          resetBtn.addEventListener("click", () => {
+            const d = 0.6,
+              l = 0.3;
+            if (lightInput) {
+              lightInput.value = l;
+              setLight(l);
+            }
+            if (darkInput) {
+              darkInput.value = d;
+              setDark(d);
+            }
+            localStorage.removeItem("overlayLightAlpha");
+            localStorage.removeItem("overlayDarkAlpha");
+          });
+        }
+      })();
+    </script>
+    <script>
+      // Sidebar Toggle
+      const menuToggle = document.getElementById("menuToggle");
+      const sidebar = document.getElementById("sidebar");
+      const sidebarClose = document.getElementById("sidebarClose");
+      const sidebarOverlay = document.getElementById("sidebarOverlay");
+
+      if (menuToggle) {
+        menuToggle.addEventListener("click", () => {
+          sidebar.classList.add("active");
+          sidebarOverlay.classList.add("active");
+        });
+      }
+
+      if (sidebarClose) {
+        sidebarClose.addEventListener("click", () => {
+          sidebar.classList.remove("active");
+          sidebarOverlay.classList.remove("active");
+        });
+      }
+
+      if (sidebarOverlay) {
+        sidebarOverlay.addEventListener("click", () => {
+          sidebar.classList.remove("active");
+          sidebarOverlay.classList.remove("active");
+        });
+      }
+
+      // Theme Toggle
+      const themeToggle = document.getElementById("themeToggle");
+      const themeLabel = document.getElementById("themeLabel");
+      const body = document.body;
+
+      // Load saved theme
+      const savedTheme = localStorage.getItem("theme");
+      if (savedTheme === "dark") {
+        body.classList.add("dark-mode");
+        themeToggle.checked = true;
+        themeLabel.textContent = "Light Mode";
+      }
+
+      if (themeToggle) {
+        themeToggle.addEventListener("change", () => {
+          if (themeToggle.checked) {
+            body.classList.add("dark-mode");
+            themeLabel.textContent = "Light Mode";
+            localStorage.setItem("theme", "dark");
+          } else {
+            body.classList.remove("dark-mode");
+            themeLabel.textContent = "Dark Mode";
+            localStorage.setItem("theme", "light");
+          }
+        });
+      }
+
+      // Settings functionality
+      document.addEventListener("DOMContentLoaded", function () {
+        // Tab activation
+        const triggerTabList = [].slice.call(
+          document.querySelectorAll('a[data-bs-toggle="list"]'),
+        );
+        triggerTabList.forEach(function (triggerEl) {
+          triggerEl.addEventListener("click", function (event) {
+            event.preventDefault();
+            triggerTabList.forEach(function (el) {
+              el.classList.remove("active");
+            });
+            this.classList.add("active");
+
+            const tabId = this.getAttribute("href");
+            document.querySelectorAll(".tab-pane").forEach(function (pane) {
+              pane.classList.remove("show", "active");
+            });
+            document.querySelector(tabId).classList.add("show", "active");
+          });
+        });
+
+        // Color options
+        document.querySelectorAll(".color-option").forEach(function (button) {
+          button.addEventListener("click", function () {
+            // Remove active class from all color options
+            document.querySelectorAll(".color-option").forEach(function (btn) {
+              btn.classList.remove("active");
+            });
+            // Add active class to clicked button
+            this.classList.add("active");
+          });
+        });
+
+        // Form submissions
+        document.querySelectorAll("form").forEach(function (form) {
+          form.addEventListener("submit", function (e) {
+            e.preventDefault();
+            showToast("Settings saved successfully!", "success");
+          });
+        });
+
+        // Theme radio buttons
+        const themeRadios = document.querySelectorAll('input[name="theme"]');
+        themeRadios.forEach(function (radio) {
+          radio.addEventListener("change", function () {
+            const theme = this.id;
+            if (theme === "darkTheme") {
+              document.body.classList.remove("light-mode");
+              document.body.classList.add("dark-mode");
+              localStorage.setItem("theme", "dark-mode");
+              updateThemeIcon();
+            } else if (theme === "lightTheme") {
+              document.body.classList.remove("dark-mode");
+              document.body.classList.add("light-mode");
+              localStorage.setItem("theme", "light-mode");
+              updateThemeIcon();
+            }
+          });
+        });
+      });
+
+      function updateThemeIcon() {
+        const themeToggle = document.getElementById("themeToggle");
+        if (!themeToggle) return;
+        const isDarkMode = document.body.classList.contains("dark-mode");
+        themeToggle.innerHTML = isDarkMode
+          ? '<i class="fas fa-sun"></i>'
+          : '<i class="fas fa-moon"></i>';
+      }
+    </script>
+  </body>
+</html>

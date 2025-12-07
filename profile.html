@@ -1,0 +1,809 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Internship Tracker - Profile</title>
+    <!-- Bootstrap 5 CSS -->
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+    <!-- Font Awesome -->
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+    />
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="css/style.css" />
+    <link rel="stylesheet" href="css/theme.css" />
+    <!-- Animate.css -->
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"
+    />
+
+    <style>
+      /* Notification & Profile icon sizing */
+      #notificationsBtn i,
+      .profile-btn i {
+        font-size: 1.4rem; /* slightly bigger icon */
+        line-height: 1;
+        vertical-align: middle;
+      }
+
+      #notificationsBtn,
+      .profile-btn {
+        padding: 6px 10px; /* slightly larger click target */
+      }
+
+      /* Slightly smaller on small screens */
+      @media (max-width: 576px) {
+        #notificationsBtn i,
+        .profile-btn i {
+          font-size: 1.2rem;
+        }
+      }
+
+      /* Sidebar Styles */
+      .sidebar {
+        position: fixed;
+        top: 0;
+        left: -280px;
+        width: 280px;
+        height: 100vh;
+        background: #fff;
+        box-shadow: 4px 0 10px rgba(0, 0, 0, 0.1);
+        transition: left 0.3s ease;
+        z-index: 1050;
+        overflow-y: auto;
+      }
+
+      .sidebar.active {
+        left: 0;
+      }
+
+      .sidebar-header {
+        padding: 20px;
+        border-bottom: 1px solid #e0e0e0;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+      }
+
+      .sidebar-header h4 {
+        margin: 0;
+        color: #333;
+        font-weight: 600;
+      }
+
+      .sidebar-close {
+        background: none;
+        border: none;
+        font-size: 24px;
+        cursor: pointer;
+        color: #666;
+      }
+
+      .sidebar-menu {
+        padding: 20px 0;
+      }
+
+      .sidebar-menu-item {
+        padding: 15px 25px;
+        display: flex;
+        align-items: center;
+        color: #333;
+        text-decoration: none;
+        transition: all 0.3s ease;
+        border-left: 3px solid transparent;
+      }
+
+      .sidebar-menu-item:hover {
+        background: #f8f9fa;
+        border-left-color: #4e73df;
+        color: #4e73df;
+      }
+
+      .sidebar-menu-item.active {
+        background: #e7f1ff;
+        border-left-color: #4e73df;
+        color: #4e73df;
+        font-weight: 600;
+      }
+
+      .sidebar-menu-item i {
+        width: 25px;
+        margin-right: 15px;
+        font-size: 18px;
+      }
+
+      .sidebar-divider {
+        margin: 10px 25px;
+        border-top: 1px solid #e0e0e0;
+      }
+
+      .sidebar-overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.5);
+        display: none;
+        z-index: 1040;
+      }
+
+      .sidebar-overlay.active {
+        display: block;
+      }
+
+      /* Theme Toggle Switch */
+      .theme-switch-wrapper {
+        display: flex;
+        align-items: center;
+        padding: 15px 25px;
+      }
+
+      .theme-switch {
+        position: relative;
+        display: inline-block;
+        width: 50px;
+        height: 24px;
+        margin-right: 10px;
+      }
+
+      .theme-switch input {
+        opacity: 0;
+        width: 0;
+        height: 0;
+      }
+
+      .slider {
+        position: absolute;
+        cursor: pointer;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background-color: #ccc;
+        transition: 0.4s;
+        border-radius: 24px;
+      }
+
+      .slider:before {
+        position: absolute;
+        content: "";
+        height: 18px;
+        width: 18px;
+        left: 3px;
+        bottom: 3px;
+        background-color: white;
+        transition: 0.4s;
+        border-radius: 50%;
+      }
+
+      input:checked + .slider {
+        background-color: #4e73df;
+      }
+
+      input:checked + .slider:before {
+        transform: translateX(26px);
+      }
+
+      /* Hamburger Menu Button */
+      .menu-toggle {
+        background: none;
+        border: none;
+        font-size: 24px;
+        cursor: pointer;
+        color: #fff;
+        padding: 5px 10px;
+      }
+
+      .navbar-clean {
+        padding: 15px 0;
+      }
+
+      /* Dark Mode Styles */
+      body.dark-mode {
+        background-color: #1a1a1a;
+        color: #e0e0e0;
+      }
+
+      body.dark-mode .sidebar {
+        background: #2d2d2d;
+      }
+
+      body.dark-mode .sidebar-header {
+        border-bottom-color: #444;
+      }
+
+      body.dark-mode .sidebar-header h4 {
+        color: #e0e0e0;
+      }
+
+      body.dark-mode .sidebar-close {
+        color: #e0e0e0;
+      }
+
+      body.dark-mode .sidebar-menu-item {
+        color: #e0e0e0;
+      }
+
+      body.dark-mode .sidebar-menu-item:hover {
+        background: #3a3a3a;
+      }
+
+      body.dark-mode .sidebar-menu-item.active {
+        background: #1e3a5f;
+      }
+
+      body.dark-mode .sidebar-divider {
+        border-top-color: #444;
+      }
+
+      body.dark-mode .card {
+        background: rgba(45, 45, 45, 0.95);
+        color: #e0e0e0;
+      }
+
+      body.dark-mode .navbar {
+        background: #2d2d2d !important;
+      }
+
+      body.dark-mode .form-control {
+        background: #2d2d2d;
+        color: #e0e0e0;
+        border-color: #444;
+      }
+
+      body.dark-mode .text-muted {
+        color: #999 !important;
+      }
+    </style>
+  </head>
+
+  <body>
+    <!-- Sidebar Overlay -->
+    <div class="sidebar-overlay" id="sidebarOverlay"></div>
+
+    <!-- Sidebar Menu -->
+    <div class="sidebar" id="sidebar">
+      <div class="sidebar-header">
+        <h4><i class="fas fa-briefcase me-2"></i>Menu</h4>
+        <button class="sidebar-close" id="sidebarClose">
+          <i class="fas fa-times"></i>
+        </button>
+      </div>
+
+      <div class="sidebar-menu">
+        <!-- Sidebar User -->
+        <div class="sidebar-user">
+          <img src="images/zizanrazak.jpg" alt="Zizan Razak" />
+          <div class="user-info">
+            <strong>Hi, Zizan Razak!</strong>
+            <div class="muted">Welcome back</div>
+          </div>
+        </div>
+
+        <!-- Quick Access Section -->
+        <div
+          style="
+            padding: 10px 25px;
+            font-size: 12px;
+            color: #999;
+            text-transform: uppercase;
+            font-weight: 600;
+          "
+        >
+          Quick Access
+        </div>
+
+        <a href="profile.html" class="sidebar-menu-item active">
+          <i class="fas fa-user"></i>
+          <span>Student Profile</span>
+        </a>
+
+        <div class="sidebar-divider"></div>
+
+        <!-- Main Navigation -->
+        <a href="dashboard.html" class="sidebar-menu-item">
+          <i class="fas fa-tachometer-alt"></i>
+          <span>Dashboard</span>
+        </a>
+
+        <a href="internships.html" class="sidebar-menu-item">
+          <i class="fas fa-file-alt"></i>
+          <span>My Internships</span>
+        </a>
+
+        <a href="companies.html" class="sidebar-menu-item">
+          <i class="fas fa-building"></i>
+          <span>Companies</span>
+        </a>
+
+        <div class="sidebar-divider"></div>
+
+        <!-- Settings -->
+        <a href="settings.html" class="sidebar-menu-item">
+          <i class="fas fa-cog"></i>
+          <span>Settings</span>
+        </a>
+
+        <div class="sidebar-divider"></div>
+
+        <!-- Theme Toggle -->
+        <div class="theme-switch-wrapper">
+          <label class="theme-switch">
+            <input type="checkbox" id="themeToggle" />
+            <span class="slider"></span>
+          </label>
+          <span id="themeLabel">Dark Mode</span>
+        </div>
+
+        <div class="sidebar-divider"></div>
+
+        <!-- Logout -->
+        <a href="index.html" class="sidebar-menu-item text-danger">
+          <i class="fas fa-sign-out-alt"></i>
+          <span>Logout</span>
+        </a>
+      </div>
+    </div>
+
+    <!-- Clean Navigation Header -->
+    <nav
+      class="navbar navbar-expand-lg navbar-dark bg-gradient-nav navbar-clean"
+    >
+      <div class="container d-flex align-items-center">
+        <button id="menuToggle" class="menu-toggle me-2">
+          <i class="fas fa-bars"></i>
+        </button>
+        <a class="navbar-brand ms-1" href="dashboard.html">
+          <img
+            src="images/internship.png"
+            alt="Internship Tracker"
+            class="site-logo"
+          />
+        </a>
+        <div class="ms-auto d-flex align-items-center">
+          <button
+            id="notificationsBtn"
+            class="btn btn-link text-white me-2"
+            title="Notifications"
+          >
+            <i class="fas fa-bell"></i>
+          </button>
+          <a
+            href="profile.html"
+            class="btn btn-link text-white d-flex align-items-center"
+            title="Profile"
+            ><i class="fas fa-user-circle fa-lg"></i
+          ></a>
+        </div>
+      </div>
+    </nav>
+
+    <div class="container my-4">
+      <div class="row">
+        <div class="col-md-4">
+          <!-- Profile Card -->
+          <div class="card shadow-sm mb-4">
+            <div class="card-body text-center">
+              <div class="profile-avatar mb-2">
+                <img
+                  id="profilePhoto"
+                  src="images/zizanrazak.jpg"
+                  alt="Profile"
+                  class="rounded-circle img-fluid"
+                  style="width: 150px; height: 150px; object-fit: cover"
+                />
+              </div>
+
+              <!-- Change Photo Button -->
+              <button class="btn btn-sm btn-outline-primary mb-3">
+                <i class="fas fa-camera"></i> Change Photo
+              </button>
+
+              <h4 class="card-title mb-1">Zizan Razak</h4>
+              <p class="text-muted mb-3">Internship Seeker</p>
+
+              <div class="d-flex justify-content-center gap-2">
+                <span class="badge bg-primary">Information System</span>
+                <span class="badge bg-success">Final Year</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Quick Stats -->
+          <div class="card shadow-sm">
+            <div class="card-header bg-gradient-nav text-white">
+              <h6 class="mb-0">
+                <i class="fas fa-chart-line"></i> Application Stats
+              </h6>
+            </div>
+            <div class="card-body">
+              <div class="stats-item d-flex justify-content-between mb-2">
+                <span>Total Applications</span>
+                <strong>15</strong>
+              </div>
+              <div class="stats-item d-flex justify-content-between mb-2">
+                <span>Interview Rate</span>
+                <strong>40%</strong>
+              </div>
+              <div class="stats-item d-flex justify-content-between mb-2">
+                <span>Success Rate</span>
+                <strong>13%</strong>
+              </div>
+              <div class="stats-item d-flex justify-content-between">
+                <span>Avg. Response Time</span>
+                <strong>7 days</strong>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="col-md-8">
+          <!-- Profile Details -->
+          <div class="card shadow-sm mb-4">
+            <div
+              class="card-header bg-gradient-nav text-white d-flex justify-content-between align-items-center"
+            >
+              <h5 class="mb-0">
+                <i class="fas fa-user"></i> Personal Information
+              </h5>
+              <button class="btn btn-sm btn-light" id="editProfileBtn">
+                <i class="fas fa-edit"></i> Edit
+              </button>
+            </div>
+            <div class="card-body">
+              <form id="profileForm">
+                <div class="row">
+                  <div class="col-md-6 mb-3">
+                    <label class="form-label">Full Name</label>
+                    <input
+                      type="text"
+                      class="form-control"
+                      value="Student User"
+                      readonly
+                    />
+                  </div>
+                  <div class="col-md-6 mb-3">
+                    <label class="form-label">Email</label>
+                    <input
+                      type="email"
+                      class="form-control"
+                      value="student@gmail.com"
+                      readonly
+                    />
+                  </div>
+                  <div class="col-md-6 mb-3">
+                    <label class="form-label">Phone</label>
+                    <input
+                      type="tel"
+                      class="form-control"
+                      value="+60 12-345 6789"
+                      readonly
+                    />
+                  </div>
+                  <div class="col-md-6 mb-3">
+                    <label class="form-label">University</label>
+                    <input
+                      type="text"
+                      class="form-control"
+                      value="Universiti Teknologi MARA (UiTM)"
+                      readonly
+                    />
+                  </div>
+                  <div class="col-md-6 mb-3">
+                    <label class="form-label">Course</label>
+                    <input
+                      type="text"
+                      class="form-control"
+                      value="Bachelor of Information Science"
+                      readonly
+                    />
+                  </div>
+                  <div class="col-md-6 mb-3">
+                    <label class="form-label">Expected Graduation</label>
+                    <input
+                      type="text"
+                      class="form-control"
+                      value="January 2026"
+                      readonly
+                    />
+                  </div>
+                  <div class="col-12 mb-3">
+                    <label class="form-label">Bio</label>
+                    <textarea class="form-control" rows="3" readonly>
+Passionate information system student with interest in software development and data analytics. Seeking internship opportunities to apply classroom knowledge in real-world projects.
+                                    </textarea
+                    >
+                  </div>
+                  <div class="col-12 d-none" id="saveProfileSection">
+                    <button
+                      type="button"
+                      class="btn btn-gradient"
+                      id="saveProfileBtn"
+                    >
+                      <i class="fas fa-save"></i> Save Changes
+                    </button>
+                    <button
+                      type="button"
+                      class="btn btn-secondary"
+                      id="cancelEditBtn"
+                    >
+                      Cancel
+                    </button>
+                  </div>
+                </div>
+              </form>
+            </div>
+          </div>
+
+          <!-- Skills & Interests -->
+          <div class="card shadow-sm">
+            <div class="card-header bg-gradient-nav text-white">
+              <h5 class="mb-0">
+                <i class="fas fa-star"></i> Skills & Interests
+              </h5>
+            </div>
+            <div class="card-body">
+              <div class="mb-3">
+                <h6>Technical Skills</h6>
+                <div class="d-flex flex-wrap gap-2 mb-3">
+                  <span class="badge bg-primary">JavaScript</span>
+                  <span class="badge bg-primary">Python</span>
+                  <span class="badge bg-primary">HTML/CSS</span>
+                  <span class="badge bg-primary">React</span>
+                  <span class="badge bg-primary">Node.js</span>
+                  <span class="badge bg-primary">MySQL</span>
+                </div>
+              </div>
+              <div class="mb-3">
+                <h6>Interests</h6>
+                <div class="d-flex flex-wrap gap-2">
+                  <span class="badge bg-success">Web Development</span>
+                  <span class="badge bg-success">Data Analytics</span>
+                  <span class="badge bg-success">UI/UX Design</span>
+                  <span class="badge bg-success">Mobile Apps</span>
+                  <span class="badge bg-success">Cloud Computing</span>
+                </div>
+              </div>
+              <div class="mb-3">
+                <h6>Resume</h6>
+                <div class="d-flex align-items-center">
+                  <i class="fas fa-file-pdf text-danger fa-2x me-3"></i>
+                  <div>
+                    <p class="mb-1">student_resume.pdf</p>
+                    <small class="text-muted">Last updated: 2025-10-20</small>
+                  </div>
+                  <button class="btn btn-sm btn-outline-primary ms-auto">
+                    <i class="fas fa-download"></i> Download
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="footer mt-5 py-4">
+      <div class="container">
+        <div class="row">
+          <div class="col-md-6">
+            <h5>Internship Tracker Malaysia</h5>
+            <p>Track and manage your internship applications effectively.</p>
+            <div class="social-icons">
+              <a
+                href="https://www.facebook.com"
+                target="_blank"
+                class="text-decoration-none me-3"
+              >
+                <i class="fab fa-facebook fa-2x"></i>
+              </a>
+              <a
+                href="https://www.twitter.com"
+                target="_blank"
+                class="text-decoration-none me-3"
+              >
+                <i class="fab fa-twitter fa-2x"></i>
+              </a>
+              <a
+                href="https://www.linkedin.com"
+                target="_blank"
+                class="text-decoration-none me-3"
+              >
+                <i class="fab fa-linkedin fa-2x"></i>
+              </a>
+              <a
+                href="https://www.instagram.com"
+                target="_blank"
+                class="text-decoration-none"
+              >
+                <i class="fab fa-instagram fa-2x"></i>
+              </a>
+            </div>
+          </div>
+          <div class="col-md-3">
+            <h5>Quick Links</h5>
+            <ul class="list-unstyled">
+              <li>
+                <a href="dashboard.html" class="text-decoration-none"
+                  ><i class="fas fa-chevron-right"></i> Dashboard</a
+                >
+              </li>
+              <li>
+                <a href="internships.html" class="text-decoration-none"
+                  ><i class="fas fa-chevron-right"></i> My Internships</a
+                >
+              </li>
+              <li>
+                <a href="companies.html" class="text-decoration-none"
+                  ><i class="fas fa-chevron-right"></i> Companies</a
+                >
+              </li>
+              <li>
+                <a href="profile.html" class="text-decoration-none"
+                  ><i class="fas fa-chevron-right"></i> Profile</a
+                >
+              </li>
+              <li>
+                <a href="settings.html" class="text-decoration-none"
+                  ><i class="fas fa-chevron-right"></i> Settings</a
+                >
+              </li>
+            </ul>
+          </div>
+          <div class="col-md-3">
+            <h5>Contact</h5>
+            <ul class="list-unstyled">
+              <li>
+                <i class="fas fa-envelope"></i> support@internshiptracker.com.my
+              </li>
+              <li><i class="fas fa-phone"></i> +60 3-1234 5678</li>
+              <li>
+                <i class="fas fa-map-marker-alt"></i> Kuala Lumpur, Malaysia
+              </li>
+            </ul>
+          </div>
+        </div>
+        <div class="row mt-3">
+          <div class="col-12 text-center">
+            <div class="tricolor-footer mx-auto">
+              <div class="color-bar blue"></div>
+              <div class="color-bar silver"></div>
+              <div class="color-bar red"></div>
+            </div>
+            <p class="mb-0 mt-2">
+              &copy; 2025 Internship Tracker Malaysia. All rights reserved.
+            </p>
+          </div>
+        </div>
+      </div>
+    </footer>
+
+    <!-- Bootstrap 5 JS Bundle with Popper -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- Custom JS -->
+    <script src="js/script.js"></script>
+    <script>
+      // Sidebar Toggle
+      const menuToggle = document.getElementById("menuToggle");
+      const sidebar = document.getElementById("sidebar");
+      const sidebarClose = document.getElementById("sidebarClose");
+      const sidebarOverlay = document.getElementById("sidebarOverlay");
+
+      if (menuToggle) {
+        menuToggle.addEventListener("click", () => {
+          sidebar.classList.add("active");
+          sidebarOverlay.classList.add("active");
+        });
+      }
+
+      if (sidebarClose) {
+        sidebarClose.addEventListener("click", () => {
+          sidebar.classList.remove("active");
+          sidebarOverlay.classList.remove("active");
+        });
+      }
+
+      if (sidebarOverlay) {
+        sidebarOverlay.addEventListener("click", () => {
+          sidebar.classList.remove("active");
+          sidebarOverlay.classList.remove("active");
+        });
+      }
+
+      // Theme Toggle
+      const themeToggle = document.getElementById("themeToggle");
+      const themeLabel = document.getElementById("themeLabel");
+      const body = document.body;
+
+      // Load saved theme
+      const savedTheme = localStorage.getItem("theme");
+      if (savedTheme === "dark") {
+        body.classList.add("dark-mode");
+        themeToggle.checked = true;
+        themeLabel.textContent = "Light Mode";
+      }
+
+      if (themeToggle) {
+        themeToggle.addEventListener("change", () => {
+          if (themeToggle.checked) {
+            body.classList.add("dark-mode");
+            themeLabel.textContent = "Light Mode";
+            localStorage.setItem("theme", "dark");
+          } else {
+            body.classList.remove("dark-mode");
+            themeLabel.textContent = "Dark Mode";
+            localStorage.setItem("theme", "light");
+          }
+        });
+      }
+
+      // Profile Edit Functionality
+      document.addEventListener("DOMContentLoaded", function () {
+        const editProfileBtn = document.getElementById("editProfileBtn");
+        const saveProfileSection =
+          document.getElementById("saveProfileSection");
+        const saveProfileBtn = document.getElementById("saveProfileBtn");
+        const cancelEditBtn = document.getElementById("cancelEditBtn");
+        const formInputs = document.querySelectorAll(
+          "#profileForm input, #profileForm textarea",
+        );
+
+        if (editProfileBtn) {
+          editProfileBtn.addEventListener("click", function () {
+            // Enable all inputs
+            formInputs.forEach((input) => {
+              input.removeAttribute("readonly");
+            });
+
+            // Show save buttons
+            saveProfileSection.classList.remove("d-none");
+
+            // Hide edit button
+            editProfileBtn.classList.add("d-none");
+          });
+        }
+
+        if (saveProfileBtn) {
+          saveProfileBtn.addEventListener("click", function () {
+            // Show success message
+            showToast("Profile updated successfully!", "success");
+
+            // Make inputs read-only again
+            formInputs.forEach((input) => {
+              input.setAttribute("readonly", true);
+            });
+
+            // Hide save buttons
+            saveProfileSection.classList.add("d-none");
+
+            // Show edit button again
+            editProfileBtn.classList.remove("d-none");
+          });
+        }
+
+        if (cancelEditBtn) {
+          cancelEditBtn.addEventListener("click", function () {
+            // Make inputs read-only
+            formInputs.forEach((input) => {
+              input.setAttribute("readonly", true);
+            });
+
+            // Hide save buttons
+            saveProfileSection.classList.add("d-none");
+
+            // Show edit button
+            editProfileBtn.classList.remove("d-none");
+          });
+        }
+      });
+    </script>
+  </body>
+</html>

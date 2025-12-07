@@ -1,0 +1,977 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Internship Tracker - Companies</title>
+    <!-- Bootstrap 5 CSS -->
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+    <!-- Font Awesome -->
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+    />
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="css/style.css" />
+    <link rel="stylesheet" href="css/theme.css" />
+    <!-- Animate.css -->
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"
+    />
+
+    <style>
+      /* Notification & Profile icon sizing */
+      #notificationsBtn i,
+      .profile-btn i {
+        font-size: 1.4rem; /* slightly bigger icon */
+        line-height: 1;
+        vertical-align: middle;
+      }
+
+      #notificationsBtn,
+      .profile-btn {
+        padding: 6px 10px; /* slightly larger click target */
+      }
+
+      /* Slightly smaller on small screens */
+      @media (max-width: 576px) {
+        #notificationsBtn i,
+        .profile-btn i {
+          font-size: 1.2rem;
+        }
+      }
+
+      /* Sidebar */
+      .sidebar {
+        position: fixed;
+        top: 0;
+        left: -280px;
+        width: 280px;
+        height: 100vh;
+        background: #fff;
+        box-shadow: 4px 0 10px rgba(0, 0, 0, 0.1);
+        transition: left 0.3s ease;
+        z-index: 1050;
+        overflow-y: auto;
+      }
+
+      .sidebar.active {
+        left: 0;
+      }
+
+      .sidebar-header {
+        padding: 20px;
+        border-bottom: 1px solid #e0e0e0;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+      }
+
+      .sidebar-header h4 {
+        margin: 0;
+        color: #333;
+        font-weight: 600;
+      }
+
+      .sidebar-close {
+        background: none;
+        border: none;
+        font-size: 24px;
+        cursor: pointer;
+        color: #666;
+      }
+
+      .sidebar-menu {
+        padding: 20px 0;
+      }
+
+      .sidebar-menu-item {
+        padding: 15px 25px;
+        display: flex;
+        align-items: center;
+        color: #333;
+        text-decoration: none;
+        transition: all 0.3s ease;
+        border-left: 3px solid transparent;
+      }
+
+      .sidebar-menu-item:hover {
+        background: #f8f9fa;
+        border-left-color: #4e73df;
+        color: #4e73df;
+      }
+
+      .sidebar-menu-item.active {
+        background: #e7f1ff;
+        border-left-color: #4e73df;
+        color: #4e73df;
+        font-weight: 600;
+      }
+
+      .sidebar-menu-item i {
+        width: 25px;
+        margin-right: 15px;
+        font-size: 18px;
+      }
+
+      .sidebar-divider {
+        margin: 10px 25px;
+        border-top: 1px solid #e0e0e0;
+      }
+
+      .sidebar-overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.5);
+        display: none;
+        z-index: 1040;
+      }
+
+      .sidebar-overlay.active {
+        display: block;
+      }
+
+      /* Theme Toggle Switch */
+      .theme-switch-wrapper {
+        display: flex;
+        align-items: center;
+        padding: 15px 25px;
+      }
+
+      .theme-switch {
+        position: relative;
+        display: inline-block;
+        width: 50px;
+        height: 24px;
+        margin-right: 10px;
+      }
+
+      .theme-switch input {
+        opacity: 0;
+        width: 0;
+        height: 0;
+      }
+
+      .slider {
+        position: absolute;
+        cursor: pointer;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background-color: #ccc;
+        transition: 0.4s;
+        border-radius: 24px;
+      }
+
+      .slider:before {
+        position: absolute;
+        content: "";
+        height: 18px;
+        width: 18px;
+        left: 3px;
+        bottom: 3px;
+        background-color: white;
+        transition: 0.4s;
+        border-radius: 50%;
+      }
+
+      input:checked + .slider {
+        background-color: #4e73df;
+      }
+
+      input:checked + .slider:before {
+        transform: translateX(26px);
+      }
+
+      /* Hamburger Menu */
+      .menu-toggle {
+        background: none;
+        border: none;
+        font-size: 24px;
+        cursor: pointer;
+        color: #fff;
+        padding: 5px 10px;
+      }
+
+      .navbar-clean {
+        padding: 15px 0;
+      }
+
+      /* Dark Mode Styles */
+      body.dark-mode {
+        background-color: #1a1a1a;
+        color: #e0e0e0;
+      }
+
+      body.dark-mode .sidebar {
+        background: #2d2d2d;
+      }
+
+      body.dark-mode .sidebar-header {
+        border-bottom-color: #444;
+      }
+
+      body.dark-mode .sidebar-header h4 {
+        color: #e0e0e0;
+      }
+
+      body.dark-mode .sidebar-close {
+        color: #e0e0e0;
+      }
+
+      body.dark-mode .sidebar-menu-item {
+        color: #e0e0e0;
+      }
+
+      body.dark-mode .sidebar-menu-item:hover {
+        background: #3a3a3a;
+      }
+
+      body.dark-mode .sidebar-menu-item.active {
+        background: #1e3a5f;
+      }
+
+      body.dark-mode .sidebar-divider {
+        border-top-color: #444;
+      }
+
+      body.dark-mode .card {
+        background: rgba(45, 45, 45, 0.95);
+        color: #e0e0e0;
+      }
+
+      body.dark-mode .navbar {
+        background: #2d2d2d !important;
+      }
+
+      body.dark-mode .form-control {
+        background: #2d2d2d;
+        color: #e0e0e0;
+        border-color: #444;
+      }
+
+      body.dark-mode .text-muted {
+        color: #999 !important;
+      }
+    </style>
+  </head>
+
+  <body>
+    <!-- Sidebar Overlay -->
+    <div class="sidebar-overlay" id="sidebarOverlay"></div>
+
+    <!-- Sidebar Menu -->
+    <div class="sidebar" id="sidebar">
+      <div class="sidebar-header">
+        <h4><i class="fas fa-briefcase me-2"></i>Menu</h4>
+        <button class="sidebar-close" id="sidebarClose">
+          <i class="fas fa-times"></i>
+        </button>
+      </div>
+
+      <div class="sidebar-menu">
+        <!-- Sidebar User -->
+        <div class="sidebar-user">
+          <img src="images/zizanrazak.jpg" alt="Zizan Razak" />
+          <div class="user-info">
+            <strong>Hi, Zizan Razak!</strong>
+            <div class="muted">Welcome back</div>
+          </div>
+        </div>
+
+        <!-- Quick Access Section -->
+        <div
+          style="
+            padding: 10px 25px;
+            font-size: 12px;
+            color: #999;
+            text-transform: uppercase;
+            font-weight: 600;
+          "
+        >
+          Quick Access
+        </div>
+
+        <a href="profile.html" class="sidebar-menu-item">
+          <i class="fas fa-user"></i>
+          <span>Student Profile</span>
+        </a>
+
+        <div class="sidebar-divider"></div>
+
+        <!-- Main Navigation -->
+        <a href="dashboard.html" class="sidebar-menu-item">
+          <i class="fas fa-tachometer-alt"></i>
+          <span>Dashboard</span>
+        </a>
+
+        <a href="internships.html" class="sidebar-menu-item">
+          <i class="fas fa-file-alt"></i>
+          <span>My Internships</span>
+        </a>
+
+        <a href="companies.html" class="sidebar-menu-item active">
+          <i class="fas fa-building"></i>
+          <span>Companies</span>
+        </a>
+
+        <div class="sidebar-divider"></div>
+
+        <!-- Settings -->
+        <a href="settings.html" class="sidebar-menu-item">
+          <i class="fas fa-cog"></i>
+          <span>Settings</span>
+        </a>
+
+        <div class="sidebar-divider"></div>
+
+        <!-- Theme Toggle -->
+        <div class="theme-switch-wrapper">
+          <label class="theme-switch">
+            <input type="checkbox" id="themeToggle" />
+            <span class="slider"></span>
+          </label>
+          <span id="themeLabel">Dark Mode</span>
+        </div>
+
+        <div class="sidebar-divider"></div>
+
+        <!-- Logout -->
+        <a href="index.html" class="sidebar-menu-item text-danger">
+          <i class="fas fa-sign-out-alt"></i>
+          <span>Logout</span>
+        </a>
+      </div>
+    </div>
+
+    <!-- Clean Header -->
+    <nav
+      class="navbar navbar-expand-lg navbar-dark bg-gradient-nav navbar-clean"
+    >
+      <div class="container d-flex align-items-center">
+        <button id="menuToggle" class="menu-toggle me-2">
+          <i class="fas fa-bars"></i>
+        </button>
+        <a class="navbar-brand ms-1" href="dashboard.html">
+          <img
+            src="images/internship.png"
+            alt="Internship Tracker"
+            class="site-logo"
+          />
+        </a>
+        <div class="ms-auto d-flex align-items-center">
+          <button
+            id="notificationsBtn"
+            class="btn btn-link text-white me-2"
+            title="Notifications"
+          >
+            <i class="fas fa-bell"></i>
+          </button>
+          <a
+            href="profile.html"
+            class="btn btn-link text-white d-flex align-items-center"
+            title="Profile"
+            ><i class="fas fa-user-circle fa-lg"></i
+          ></a>
+        </div>
+      </div>
+    </nav>
+
+    <div class="container my-4">
+      <!-- Header with Search -->
+      <div class="row mb-4">
+        <div class="col-md-8">
+          <h1 class="text-gradient">Malaysian Companies</h1>
+          <p class="text-muted">
+            Discover internship opportunities at top Malaysian companies
+          </p>
+        </div>
+        <div class="col-md-4">
+          <div class="input-group">
+            <input
+              type="text"
+              class="form-control"
+              placeholder="Search companies..."
+            />
+            <button class="btn btn-gradient" type="button">
+              <i class="fas fa-search"></i>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Filter Buttons -->
+      <div class="row mb-4">
+        <div class="col-12">
+          <div class="d-flex flex-wrap gap-2">
+            <button class="btn btn-outline-primary active" data-filter="all">
+              All Companies
+            </button>
+            <button class="btn btn-outline-success" data-filter="energy">
+              Energy
+            </button>
+            <button class="btn btn-outline-info" data-filter="tech">
+              Technology
+            </button>
+            <button class="btn btn-outline-warning" data-filter="finance">
+              Finance
+            </button>
+            <button class="btn btn-outline-danger" data-filter="aviation">
+              Aviation
+            </button>
+            <button class="btn btn-outline-secondary" data-filter="telecom">
+              Telecom
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Companies Grid -->
+      <div class="row" id="companiesGrid">
+        <!-- Petronas -->
+        <div class="col-md-4 mb-4" data-category="energy">
+          <div class="card h-100 shadow-sm company-card">
+            <div class="card-body">
+              <div class="d-flex align-items-center mb-3">
+                <div class="company-logo-container me-3">
+                  <!-- Replace with your actual image -->
+                  <img
+                    src="images/petronas.webp"
+                    alt="Petronas"
+                    class="company-logo"
+                  />
+                </div>
+                <div>
+                  <h5 class="card-title mb-0">Petronas</h5>
+                  <small class="text-muted">Oil & Gas</small>
+                </div>
+              </div>
+              <p class="card-text">
+                Malaysian oil and gas company, ranked among the largest
+                corporations in the world.
+              </p>
+              <div class="company-details mb-3">
+                <div class="mb-1">
+                  <i class="fas fa-map-marker-alt text-primary"></i>
+                  <small class="text-muted ms-1">Kuala Lumpur, Malaysia</small>
+                </div>
+                <div class="mb-1">
+                  <i class="fas fa-users text-success"></i>
+                  <small class="text-muted ms-1">50,000+ employees</small>
+                </div>
+                <div>
+                  <i class="fas fa-globe text-info"></i>
+                  <small class="text-muted ms-1">Global operations</small>
+                </div>
+              </div>
+              <div class="d-flex justify-content-between align-items-center">
+                <span class="badge bg-primary">3 Open Positions</span>
+                <div>
+                  <a
+                    href="https://www.petronas.com/careers"
+                    target="_blank"
+                    class="btn btn-sm btn-outline-primary"
+                  >
+                    <i class="fas fa-external-link-alt"></i> Careers
+                  </a>
+                  <a
+                    href="https://www.petronas.com"
+                    target="_blank"
+                    class="btn btn-sm btn-gradient ms-1"
+                  >
+                    <i class="fas fa-info-circle"></i> Details
+                  </a>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Grab -->
+        <div class="col-md-4 mb-4" data-category="tech">
+          <div class="card h-100 shadow-sm company-card">
+            <div class="card-body">
+              <div class="d-flex align-items-center mb-3">
+                <div class="company-logo-container me-3">
+                  <img src="images/grab.png" alt="Grab" class="company-logo" />
+                </div>
+                <div>
+                  <h5 class="card-title mb-0">Grab</h5>
+                  <small class="text-muted">Technology</small>
+                </div>
+              </div>
+              <p class="card-text">
+                Southeast Asian technology company offering ride-hailing, food
+                delivery and digital payments.
+              </p>
+              <div class="company-details mb-3">
+                <div class="mb-1">
+                  <i class="fas fa-map-marker-alt text-primary"></i>
+                  <small class="text-muted ms-1">Selangor, Malaysia</small>
+                </div>
+                <div class="mb-1">
+                  <i class="fas fa-users text-success"></i>
+                  <small class="text-muted ms-1">8,000+ employees</small>
+                </div>
+                <div>
+                  <i class="fas fa-mobile-alt text-info"></i>
+                  <small class="text-muted ms-1">Superapp platform</small>
+                </div>
+              </div>
+              <div class="d-flex justify-content-between align-items-center">
+                <span class="badge bg-success">5 Open Positions</span>
+                <div>
+                  <a
+                    href="https://grab.careers/"
+                    target="_blank"
+                    class="btn btn-sm btn-outline-success"
+                  >
+                    <i class="fas fa-external-link-alt"></i> Careers
+                  </a>
+                  <a
+                    href="https://www.grab.com"
+                    target="_blank"
+                    class="btn btn-sm btn-gradient ms-1"
+                  >
+                    <i class="fas fa-info-circle"></i> Details
+                  </a>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Maybank -->
+        <div class="col-md-4 mb-4" data-category="finance">
+          <div class="card h-100 shadow-sm company-card">
+            <div class="card-body">
+              <div class="d-flex align-items-center mb-3">
+                <div class="company-logo-container me-3">
+                  <img
+                    src="images/maybank.png"
+                    alt="Maybank"
+                    class="company-logo"
+                  />
+                </div>
+                <div>
+                  <h5 class="card-title mb-0">Maybank</h5>
+                  <small class="text-muted">Banking & Finance</small>
+                </div>
+              </div>
+              <p class="card-text">
+                Malaysian universal bank with the largest market capitalization
+                on Bursa Malaysia.
+              </p>
+              <div class="company-details mb-3">
+                <div class="mb-1">
+                  <i class="fas fa-map-marker-alt text-primary"></i>
+                  <small class="text-muted ms-1">Kuala Lumpur, Malaysia</small>
+                </div>
+                <div class="mb-1">
+                  <i class="fas fa-users text-success"></i>
+                  <small class="text-muted ms-1">43,000+ employees</small>
+                </div>
+                <div>
+                  <i class="fas fa-university text-info"></i>
+                  <small class="text-muted ms-1">Leading bank in ASEAN</small>
+                </div>
+              </div>
+              <div class="d-flex justify-content-between align-items-center">
+                <span class="badge bg-warning">4 Open Positions</span>
+                <div>
+                  <a
+                    href="https://www.maybank.com"
+                    target="_blank"
+                    class="btn btn-sm btn-outline-warning"
+                  >
+                    <i class="fas fa-external-link-alt"></i> Careers
+                  </a>
+                  <a
+                    href="https://www.maybank.com/en/about-us.page"
+                    target="_blank"
+                    class="btn btn-sm btn-gradient ms-1"
+                  >
+                    <i class="fas fa-info-circle"></i> Details
+                  </a>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Shopee -->
+        <div class="col-md-4 mb-4" data-category="tech">
+          <div class="card h-100 shadow-sm company-card">
+            <div class="card-body">
+              <div class="d-flex align-items-center mb-3">
+                <div class="company-logo-container me-3">
+                  <img
+                    src="images/shopee.webp"
+                    alt="Shopee"
+                    class="company-logo"
+                  />
+                </div>
+                <div>
+                  <h5 class="card-title mb-0">Shopee</h5>
+                  <small class="text-muted">E-commerce</small>
+                </div>
+              </div>
+              <p class="card-text">
+                Leading e-commerce platform in Southeast Asia and Taiwan, owned
+                by Sea Limited.
+              </p>
+              <div class="company-details mb-3">
+                <div class="mb-1">
+                  <i class="fas fa-map-marker-alt text-primary"></i>
+                  <small class="text-muted ms-1">Kuala Lumpur, Malaysia</small>
+                </div>
+                <div class="mb-1">
+                  <i class="fas fa-users text-success"></i>
+                  <small class="text-muted ms-1">10,000+ employees</small>
+                </div>
+                <div>
+                  <i class="fas fa-shopping-cart text-info"></i>
+                  <small class="text-muted ms-1">Online marketplace</small>
+                </div>
+              </div>
+              <div class="d-flex justify-content-between align-items-center">
+                <span class="badge bg-info">3 Open Positions</span>
+                <div>
+                  <a
+                    href="https://careers.shopee.com.my/"
+                    target="_blank"
+                    class="btn btn-sm btn-outline-info"
+                  >
+                    <i class="fas fa-external-link-alt"></i> Careers
+                  </a>
+                  <a
+                    href="https://shopee.com.my"
+                    target="_blank"
+                    class="btn btn-sm btn-gradient ms-1"
+                  >
+                    <i class="fas fa-info-circle"></i> Details
+                  </a>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- AirAsia -->
+        <div class="col-md-4 mb-4" data-category="aviation">
+          <div class="card h-100 shadow-sm company-card">
+            <div class="card-body">
+              <div class="d-flex align-items-center mb-3">
+                <div class="company-logo-container me-3">
+                  <img
+                    src="images/airasia.webp"
+                    alt="AirAsia"
+                    class="company-logo"
+                  />
+                </div>
+                <div>
+                  <h5 class="card-title mb-0">AirAsia</h5>
+                  <small class="text-muted">Aviation</small>
+                </div>
+              </div>
+              <p class="card-text">
+                Malaysian multinational low-cost airline headquartered near
+                Kuala Lumpur.
+              </p>
+              <div class="company-details mb-3">
+                <div class="mb-1">
+                  <i class="fas fa-map-marker-alt text-primary"></i>
+                  <small class="text-muted ms-1">Selangor, Malaysia</small>
+                </div>
+                <div class="mb-1">
+                  <i class="fas fa-users text-success"></i>
+                  <small class="text-muted ms-1">22,000+ employees</small>
+                </div>
+                <div>
+                  <i class="fas fa-plane text-info"></i>
+                  <small class="text-muted ms-1"
+                    >World's best low-cost airline</small
+                  >
+                </div>
+              </div>
+              <div class="d-flex justify-content-between align-items-center">
+                <span class="badge bg-danger">2 Open Positions</span>
+                <div>
+                  <a
+                    href="https://careers.airasia.com/"
+                    target="_blank"
+                    class="btn btn-sm btn-outline-danger"
+                  >
+                    <i class="fas fa-external-link-alt"></i> Careers
+                  </a>
+                  <a
+                    href="https://www.airasia.com"
+                    target="_blank"
+                    class="btn btn-sm btn-gradient ms-1"
+                  >
+                    <i class="fas fa-info-circle"></i> Details
+                  </a>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Celcom -->
+        <div class="col-md-4 mb-4" data-category="telecom">
+          <div class="card h-100 shadow-sm company-card">
+            <div class="card-body">
+              <div class="d-flex align-items-center mb-3">
+                <div class="company-logo-container me-3">
+                  <img
+                    src="images/celcom.webp"
+                    alt="Celcom"
+                    class="company-logo"
+                  />
+                </div>
+                <div>
+                  <h5 class="card-title mb-0">Celcom</h5>
+                  <small class="text-muted">Telecommunications</small>
+                </div>
+              </div>
+              <p class="card-text">
+                Malaysian mobile telecommunications company and one of the
+                oldest in Malaysia.
+              </p>
+              <div class="company-details mb-3">
+                <div class="mb-1">
+                  <i class="fas fa-map-marker-alt text-primary"></i>
+                  <small class="text-muted ms-1">Selangor, Malaysia</small>
+                </div>
+                <div class="mb-1">
+                  <i class="fas fa-users text-success"></i>
+                  <small class="text-muted ms-1">5,000+ employees</small>
+                </div>
+                <div>
+                  <i class="fas fa-signal text-info"></i>
+                  <small class="text-muted ms-1">5G network provider</small>
+                </div>
+              </div>
+              <div class="d-flex justify-content-between align-items-center">
+                <span class="badge bg-secondary">3 Open Positions</span>
+                <div>
+                  <a
+                    href="https://help.celcomdigi.com/en/support/home"
+                    target="_blank"
+                    class="btn btn-sm btn-outline-secondary"
+                  >
+                    <i class="fas fa-external-link-alt"></i> Careers
+                  </a>
+                  <a
+                    href="https://www.celcom.com.my"
+                    target="_blank"
+                    class="btn btn-sm btn-gradient ms-1"
+                  >
+                    <i class="fas fa-info-circle"></i> Details
+                  </a>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Info Box -->
+      <div class="row mt-4">
+        <div class="col-12">
+          <div class="alert alert-info pro-tip d-flex align-items-center">
+            <i class="fas fa-lightbulb fa-2x me-3"></i>
+            <div>
+              <h5 class="alert-heading">Pro Tip</h5>
+              <p class="mb-0">
+                Click on the "Careers" button to visit the official career page
+                of each company for internship applications. Remember to prepare
+                your resume and cover letter before applying!
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="footer mt-5 py-4">
+      <div class="container">
+        <div class="row">
+          <div class="col-md-6">
+            <h5>Internship Tracker Malaysia</h5>
+            <p>Track and manage your internship applications effectively.</p>
+            <div class="social-icons">
+              <a
+                href="https://www.facebook.com"
+                target="_blank"
+                class="text-decoration-none me-3"
+              >
+                <i class="fab fa-facebook fa-2x"></i>
+              </a>
+              <a
+                href="https://twitter.com"
+                target="_blank"
+                class="text-decoration-none me-3"
+              >
+                <i class="fab fa-twitter fa-2x"></i>
+              </a>
+              <a
+                href="https://www.linkedin.com"
+                target="_blank"
+                class="text-decoration-none me-3"
+              >
+                <i class="fab fa-linkedin fa-2x"></i>
+              </a>
+              <a
+                href="https://www.instagram.com"
+                target="_blank"
+                class="text-decoration-none"
+              >
+                <i class="fab fa-instagram fa-2x"></i>
+              </a>
+            </div>
+          </div>
+          <div class="col-md-3">
+            <h5>Quick Links</h5>
+            <ul class="list-unstyled">
+              <li>
+                <a href="dashboard.html" class="text-decoration-none"
+                  ><i class="fas fa-chevron-right"></i> Dashboard</a
+                >
+              </li>
+              <li>
+                <a href="internships.html" class="text-decoration-none"
+                  ><i class="fas fa-chevron-right"></i> My Internships</a
+                >
+              </li>
+              <li>
+                <a href="companies.html" class="text-decoration-none"
+                  ><i class="fas fa-chevron-right"></i> Companies</a
+                >
+              </li>
+            </ul>
+          </div>
+          <div class="col-md-3">
+            <h5>Contact</h5>
+            <ul class="list-unstyled">
+              <li>
+                <i class="fas fa-envelope"></i> support@internshiptracker.com.my
+              </li>
+              <li><i class="fas fa-phone"></i> +60 3-1234 5678</li>
+              <li>
+                <i class="fas fa-map-marker-alt"></i> Kuala Lumpur, Malaysia
+              </li>
+            </ul>
+          </div>
+        </div>
+        <div class="row mt-3">
+          <div class="col-12 text-center">
+            <div class="tricolor-footer mx-auto">
+              <div class="color-bar blue"></div>
+              <div class="color-bar silver"></div>
+              <div class="color-bar red"></div>
+            </div>
+            <p class="mb-0 mt-2">
+              &copy; 2025 Internship Tracker Malaysia. All rights reserved.
+            </p>
+          </div>
+        </div>
+      </div>
+    </footer>
+
+    <!-- Bootstrap 5 JS Bundle with Popper -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- Custom JS -->
+    <script src="js/script.js"></script>
+    <script>
+      // Sidebar Toggle
+      const menuToggle = document.getElementById("menuToggle");
+      const sidebar = document.getElementById("sidebar");
+      const sidebarClose = document.getElementById("sidebarClose");
+      const sidebarOverlay = document.getElementById("sidebarOverlay");
+
+      if (menuToggle) {
+        menuToggle.addEventListener("click", () => {
+          sidebar.classList.add("active");
+          sidebarOverlay.classList.add("active");
+        });
+      }
+
+      if (sidebarClose) {
+        sidebarClose.addEventListener("click", () => {
+          sidebar.classList.remove("active");
+          sidebarOverlay.classList.remove("active");
+        });
+      }
+
+      if (sidebarOverlay) {
+        sidebarOverlay.addEventListener("click", () => {
+          sidebar.classList.remove("active");
+          sidebarOverlay.classList.remove("active");
+        });
+      }
+
+      // Theme Toggle
+      const themeToggle = document.getElementById("themeToggle");
+      const themeLabel = document.getElementById("themeLabel");
+      const body = document.body;
+
+      // Load saved theme
+      const savedTheme = localStorage.getItem("theme");
+      if (savedTheme === "dark") {
+        body.classList.add("dark-mode");
+        themeToggle.checked = true;
+        themeLabel.textContent = "Light Mode";
+      }
+
+      if (themeToggle) {
+        themeToggle.addEventListener("change", () => {
+          if (themeToggle.checked) {
+            body.classList.add("dark-mode");
+            themeLabel.textContent = "Light Mode";
+            localStorage.setItem("theme", "dark");
+          } else {
+            body.classList.remove("dark-mode");
+            themeLabel.textContent = "Dark Mode";
+            localStorage.setItem("theme", "light");
+          }
+        });
+      }
+
+      // Company Filtering
+      const filterButtons = document.querySelectorAll("[data-filter]");
+      const companyCards = document.querySelectorAll(".company-card");
+
+      filterButtons.forEach((button) => {
+        button.addEventListener("click", () => {
+          // Remove active class from all buttons
+          filterButtons.forEach((btn) => btn.classList.remove("active"));
+          // Add active class to clicked button
+          button.classList.add("active");
+
+          const filterValue = button.getAttribute("data-filter");
+
+          // Show/hide cards based on filter
+          companyCards.forEach((card) => {
+            const category = card.parentElement.getAttribute("data-category");
+
+            if (filterValue === "all" || category === filterValue) {
+              card.parentElement.style.display = "block";
+            } else {
+              card.parentElement.style.display = "none";
+            }
+          });
+        });
+      });
+    </script>
+  </body>
+</html>

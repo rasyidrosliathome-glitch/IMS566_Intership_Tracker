@@ -1,0 +1,1037 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Internship Tracker - Dashboard</title>
+    <!-- Bootstrap 5 CSS -->
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- ApexCharts -->
+    <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
+    <!-- Font Awesome -->
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+    />
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="css/style.css" />
+    <link rel="stylesheet" href="css/theme.css" />
+    <!-- Animate.css -->
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"
+    />
+
+    <!-- Dashboard Background -->
+    <style>
+      body {
+        background-image:
+          linear-gradient(rgba(255, 255, 255, 0.5), rgba(255, 255, 255, 0.5)),
+          url("images/dashboard.jpg") !important;
+        background-size: cover;
+        background-position: center;
+        background-attachment: fixed;
+        background-repeat: no-repeat;
+        transition: background-color 0.3s ease;
+      }
+
+      /* Sidebar Styles */
+      .sidebar {
+        position: fixed;
+        top: 0;
+        left: -280px;
+        width: 280px;
+        height: 100vh;
+        background: #fff;
+        box-shadow: 4px 0 10px rgba(0, 0, 0, 0.1);
+        transition: left 0.3s ease;
+        z-index: 1050;
+        overflow-y: auto;
+      }
+
+      .sidebar.active {
+        left: 0;
+      }
+
+      .sidebar-header {
+        padding: 20px;
+        border-bottom: 1px solid #e0e0e0;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+      }
+
+      .sidebar-header h4 {
+        margin: 0;
+        color: #333;
+        font-weight: 600;
+      }
+
+      .sidebar-close {
+        background: none;
+        border: none;
+        font-size: 24px;
+        cursor: pointer;
+        color: #666;
+      }
+
+      .sidebar-menu {
+        padding: 20px 0;
+      }
+
+      .sidebar-menu-item {
+        padding: 15px 25px;
+        display: flex;
+        align-items: center;
+        color: #333;
+        text-decoration: none;
+        transition: all 0.3s ease;
+        border-left: 3px solid transparent;
+      }
+
+      .sidebar-menu-item:hover {
+        background: #f8f9fa;
+        border-left-color: #4e73df;
+        color: #4e73df;
+      }
+
+      .sidebar-menu-item.active {
+        background: #e7f1ff;
+        border-left-color: #4e73df;
+        color: #4e73df;
+        font-weight: 600;
+      }
+
+      .sidebar-menu-item i {
+        width: 25px;
+        margin-right: 15px;
+        font-size: 18px;
+      }
+
+      .sidebar-divider {
+        margin: 10px 25px;
+        border-top: 1px solid #e0e0e0;
+      }
+
+      .sidebar-overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.5);
+        display: none;
+        z-index: 1040;
+      }
+
+      .sidebar-overlay.active {
+        display: block;
+      }
+
+      /* Dark Mode Styles */
+      body.dark-mode {
+        background-color: #1a1a1a;
+        color: #e0e0e0;
+      }
+
+      body.dark-mode .sidebar {
+        background: #2d2d2d;
+      }
+
+      body.dark-mode .sidebar-header {
+        border-bottom-color: #444;
+      }
+
+      body.dark-mode .sidebar-header h4 {
+        color: #e0e0e0;
+      }
+
+      body.dark-mode .sidebar-close {
+        color: #e0e0e0;
+      }
+
+      body.dark-mode .sidebar-menu-item {
+        color: #e0e0e0;
+      }
+
+      body.dark-mode .sidebar-menu-item:hover {
+        background: #3a3a3a;
+      }
+
+      body.dark-mode .sidebar-menu-item.active {
+        background: #1e3a5f;
+      }
+
+      body.dark-mode .sidebar-divider {
+        border-top-color: #444;
+      }
+
+      body.dark-mode .card {
+        background: rgba(45, 45, 45, 0.95);
+        color: #e0e0e0;
+      }
+
+      body.dark-mode .navbar {
+        background: #2d2d2d !important;
+      }
+
+      body.dark-mode .table {
+        color: #e0e0e0;
+      }
+
+      body.dark-mode .footer {
+        background: #2d2d2d;
+        color: #e0e0e0;
+      }
+
+      /* Theme Toggle Switch */
+      .theme-switch-wrapper {
+        display: flex;
+        align-items: center;
+        padding: 15px 25px;
+      }
+
+      .theme-switch {
+        position: relative;
+        display: inline-block;
+        width: 50px;
+        height: 24px;
+        margin-right: 10px;
+      }
+
+      .theme-switch input {
+        opacity: 0;
+        width: 0;
+        height: 0;
+      }
+
+      .slider {
+        position: absolute;
+        cursor: pointer;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background-color: #ccc;
+        transition: 0.4s;
+        border-radius: 24px;
+      }
+
+      .slider:before {
+        position: absolute;
+        content: "";
+        height: 18px;
+        width: 18px;
+        left: 3px;
+        bottom: 3px;
+        background-color: white;
+        transition: 0.4s;
+        border-radius: 50%;
+      }
+
+      input:checked + .slider {
+        background-color: #4e73df;
+      }
+
+      input:checked + .slider:before {
+        transform: translateX(26px);
+      }
+
+      /* Hamburger Menu Button */
+      .menu-toggle {
+        background: none;
+        border: none;
+        font-size: 24px;
+        cursor: pointer;
+        color: #fff;
+        padding: 5px 10px;
+      }
+
+      .navbar-clean {
+        padding: 15px 0;
+      }
+
+      /* Chart Container: center and responsive */
+      .chart-container {
+        height: 320px;
+        position: relative;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        padding: 8px 0;
+      }
+
+      /* Slightly smaller on small screens */
+      @media (max-width: 768px) {
+        .chart-container {
+          height: 260px;
+        }
+      }
+      @media (max-width: 480px) {
+        .chart-container {
+          height: 220px;
+        }
+      }
+
+      /* Notification & Profile icon sizing */
+      #notificationsBtn i,
+      .profile-btn i {
+        font-size: 1.4rem; /* slightly bigger icon */
+        line-height: 1;
+        vertical-align: middle;
+      }
+
+      #notificationsBtn,
+      .profile-btn {
+        padding: 6px 10px; /* slightly larger click target */
+      }
+
+      /* Slightly smaller on small screens */
+      @media (max-width: 576px) {
+        #notificationsBtn i,
+        .profile-btn i {
+          font-size: 1.2rem;
+        }
+      }
+
+      /* Line chart centering */
+      #lineChart {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 320px;
+        width: 100%;
+      }
+    </style>
+  </head>
+
+  <body>
+    <!-- Sidebar Overlay -->
+    <div class="sidebar-overlay" id="sidebarOverlay"></div>
+
+    <!-- Sidebar Menu -->
+    <div class="sidebar" id="sidebar">
+      <div class="sidebar-header">
+        <h4><i class="fas fa-briefcase me-2"></i>Menu</h4>
+        <button class="sidebar-close" id="sidebarClose">
+          <i class="fas fa-times"></i>
+        </button>
+      </div>
+
+      <div class="sidebar-menu">
+        <!-- Sidebar User -->
+        <div class="sidebar-user">
+          <img src="images/zizanrazak.jpg" alt="Zizan Razak" />
+          <div class="user-info">
+            <strong>Hi, Zizan Razak!</strong>
+            <div class="muted">Welcome back</div>
+          </div>
+        </div>
+
+        <!-- Quick Access Section -->
+        <div
+          style="
+            padding: 10px 25px;
+            font-size: 12px;
+            color: #999;
+            text-transform: uppercase;
+            font-weight: 600;
+          "
+        >
+          Quick Access
+        </div>
+
+        <a href="profile.html" class="sidebar-menu-item">
+          <i class="fas fa-user"></i>
+          <span>Student Profile</span>
+        </a>
+
+        <div class="sidebar-divider"></div>
+
+        <!-- Main Navigation -->
+        <a href="dashboard.html" class="sidebar-menu-item active">
+          <i class="fas fa-tachometer-alt"></i>
+          <span>Dashboard</span>
+        </a>
+
+        <a href="internships.html" class="sidebar-menu-item">
+          <i class="fas fa-file-alt"></i>
+          <span>My Internships</span>
+        </a>
+
+        <a href="companies.html" class="sidebar-menu-item">
+          <i class="fas fa-building"></i>
+          <span>Companies</span>
+        </a>
+
+        <div class="sidebar-divider"></div>
+
+        <!-- Settings -->
+        <a href="settings.html" class="sidebar-menu-item">
+          <i class="fas fa-cog"></i>
+          <span>Settings</span>
+        </a>
+
+        <div class="sidebar-divider"></div>
+
+        <!-- Theme Toggle -->
+        <div class="theme-switch-wrapper">
+          <label class="theme-switch">
+            <input type="checkbox" id="themeToggle" />
+            <span class="slider"></span>
+          </label>
+          <span id="themeLabel">Dark Mode</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Clean Navigation Header -->
+    <nav
+      class="navbar navbar-expand-lg navbar-dark bg-gradient-nav navbar-clean"
+    >
+      <div class="container d-flex align-items-center">
+        <div class="d-flex align-items-center">
+          <button id="menuToggle" class="menu-toggle me-2">
+            <i class="fas fa-bars"></i>
+          </button>
+          <a class="navbar-brand ms-1" href="dashboard.html">
+            <img
+              src="images/internship.png"
+              alt="Internship Tracker"
+              class="site-logo"
+            />
+          </a>
+        </div>
+        <div class="ms-auto d-flex align-items-center">
+          <button
+            id="notificationsBtn"
+            class="btn btn-link text-white me-2"
+            title="Notifications"
+          >
+            <i class="fas fa-bell"></i>
+          </button>
+          <a
+            href="profile.html"
+            class="btn btn-link text-white d-flex align-items-center"
+            title="Profile"
+            ><i class="fas fa-user-circle fa-lg"></i
+          ></a>
+        </div>
+      </div>
+    </nav>
+
+    <div class="container my-4">
+      <!-- Welcome Card -->
+      <div class="card bg-gradient-welcome mb-4 text-white">
+        <div class="card-body">
+          <div class="row align-items-center">
+            <div class="col-md-8">
+              <h2 class="card-title">Welcome back, Student!</h2>
+              <p class="card-text">
+                You have applied to 15 internships. Keep up the good work!
+              </p>
+              <a href="internships.html" class="btn btn-light">
+                <i class="fas fa-plus"></i> Add New Application
+              </a>
+            </div>
+            <div class="col-md-4 text-center">
+              <i class="fas fa-rocket fa-5x"></i>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Summary Cards -->
+      <div class="row mb-4">
+        <div class="col-md-3 mb-3">
+          <div class="card bg-gradient-1 text-white">
+            <div class="card-body">
+              <div class="d-flex justify-content-between align-items-center">
+                <div>
+                  <h5 class="card-title">Total Applications</h5>
+                  <h2 class="card-text">15</h2>
+                </div>
+                <i class="fas fa-file-alt fa-3x opacity-50"></i>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-3 mb-3">
+          <div class="card bg-gradient-2 text-white">
+            <div class="card-body">
+              <div class="d-flex justify-content-between align-items-center">
+                <div>
+                  <h5 class="card-title">Interviews</h5>
+                  <h2 class="card-text">6</h2>
+                </div>
+                <i class="fas fa-handshake fa-3x opacity-50"></i>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-3 mb-3">
+          <div class="card bg-gradient-3 text-white">
+            <div class="card-body">
+              <div class="d-flex justify-content-between align-items-center">
+                <div>
+                  <h5 class="card-title">Offers</h5>
+                  <h2 class="card-text">2</h2>
+                </div>
+                <i class="fas fa-award fa-3x opacity-50"></i>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-3 mb-3">
+          <div class="card bg-gradient-4 text-white">
+            <div class="card-body">
+              <div class="d-flex justify-content-between align-items-center">
+                <div>
+                  <h5 class="card-title">Pending</h5>
+                  <h2 class="card-text">7</h2>
+                </div>
+                <i class="fas fa-clock fa-3x opacity-50"></i>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Charts Section -->
+      <div class="row mb-4">
+        <div class="col-md-4 mb-4">
+          <div class="card shadow-sm h-100">
+            <div class="card-header bg-gradient-chart">
+              <h5 class="card-title mb-0 text-white">
+                <i class="fas fa-chart-pie"></i> Application Status Distribution
+              </h5>
+            </div>
+            <div class="card-body">
+              <div class="chart-container">
+                <canvas id="donutChart"></canvas>
+              </div>
+              <div class="chart-legend text-center mt-3">
+                <div class="d-flex flex-wrap justify-content-center">
+                  <div class="legend-item me-3 mb-1">
+                    <span
+                      class="legend-color"
+                      style="background-color: #4e73df"
+                    ></span>
+                    <span class="legend-text">Applied (7)</span>
+                  </div>
+                  <div class="legend-item me-3 mb-1">
+                    <span
+                      class="legend-color"
+                      style="background-color: #1cc88a"
+                    ></span>
+                    <span class="legend-text">Interview (6)</span>
+                  </div>
+                  <div class="legend-item me-3 mb-1">
+                    <span
+                      class="legend-color"
+                      style="background-color: #36b9cc"
+                    ></span>
+                    <span class="legend-text">Offer (2)</span>
+                  </div>
+                  <div class="legend-item mb-1">
+                    <span
+                      class="legend-color"
+                      style="background-color: #e74a3b"
+                    ></span>
+                    <span class="legend-text">Rejected (3)</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="col-md-4 mb-4">
+          <div class="card shadow-sm h-100">
+            <div class="card-header bg-gradient-chart">
+              <h5 class="card-title mb-0 text-white">
+                <i class="fas fa-chart-line"></i> Monthly Applications Trend
+              </h5>
+            </div>
+            <div class="card-body">
+              <div id="lineChart"></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="col-md-4 mb-4">
+          <div class="card shadow-sm h-100">
+            <div class="card-header bg-gradient-chart">
+              <h5 class="card-title mb-0 text-white">
+                <i class="fas fa-chart-bar"></i> Status by Month (Jan-Jun 2025)
+              </h5>
+            </div>
+            <div class="card-body">
+              <div class="chart-container">
+                <canvas id="barChart"></canvas>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Recent Applications -->
+      <div class="row">
+        <div class="col-12">
+          <div class="card shadow-sm">
+            <div class="card-header bg-gradient-table">
+              <h5 class="card-title mb-0 text-white">
+                <i class="fas fa-history"></i> Recent Applications
+              </h5>
+            </div>
+            <div class="card-body">
+              <div class="table-responsive">
+                <table class="table table-hover">
+                  <thead>
+                    <tr class="table-gradient">
+                      <th><i class="fas fa-building"></i> Company</th>
+                      <th><i class="fas fa-briefcase"></i> Position</th>
+                      <th><i class="fas fa-calendar"></i> Date Applied</th>
+                      <th><i class="fas fa-tag"></i> Status</th>
+                      <th><i class="fas fa-arrow-right"></i> Next Step</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr>
+                      <td>
+                        <i class="fas fa-oil-can text-primary me-1"></i>
+                        Petronas
+                      </td>
+                      <td>Engineering Intern</td>
+                      <td>2025-10-15</td>
+                      <td>
+                        <span class="badge bg-warning"
+                          ><i class="fas fa-handshake"></i> Interview</span
+                        >
+                      </td>
+                      <td>Technical Interview (Oct 25)</td>
+                    </tr>
+                    <tr>
+                      <td><i class="fas fa-car text-success me-1"></i> Grab</td>
+                      <td>Software Development Intern</td>
+                      <td>2025-10-10</td>
+                      <td>
+                        <span class="badge bg-success"
+                          ><i class="fas fa-award"></i> Offer</span
+                        >
+                      </td>
+                      <td>Decision by Nov 1</td>
+                    </tr>
+                    <tr>
+                      <td>
+                        <i class="fas fa-university text-danger me-1"></i>
+                        Maybank
+                      </td>
+                      <td>Finance Intern</td>
+                      <td>2025-10-05</td>
+                      <td>
+                        <span class="badge bg-primary"
+                          ><i class="fas fa-paper-plane"></i> Applied</span
+                        >
+                      </td>
+                      <td>Awaiting response</td>
+                    </tr>
+                    <tr>
+                      <td>
+                        <i class="fas fa-plane text-info me-1"></i> AirAsia
+                      </td>
+                      <td>Marketing Intern</td>
+                      <td>2025-09-28</td>
+                      <td>
+                        <span class="badge bg-danger"
+                          ><i class="fas fa-times"></i> Rejected</span
+                        >
+                      </td>
+                      <td>-</td>
+                    </tr>
+                    <tr>
+                      <td>
+                        <i class="fas fa-shopping-cart text-warning me-1"></i>
+                        Shopee
+                      </td>
+                      <td>Data Analytics Intern</td>
+                      <td>2025-09-20</td>
+                      <td>
+                        <span class="badge bg-warning"
+                          ><i class="fas fa-handshake"></i> Interview</span
+                        >
+                      </td>
+                      <td>Technical Interview (Sep 30)</td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="footer mt-5 py-4">
+      <div class="container">
+        <div class="row">
+          <div class="col-md-6">
+            <h5>Internship Tracker Malaysia</h5>
+            <p>Track and manage your internship applications effectively.</p>
+            <div class="social-icons">
+              <a
+                href="https://www.facebook.com"
+                target="_blank"
+                class="text-decoration-none me-3"
+              >
+                <i class="fab fa-facebook fa-2x"></i>
+              </a>
+              <a
+                href="https://www.twitter.com"
+                target="_blank"
+                class="text-decoration-none me-3"
+              >
+                <i class="fab fa-twitter fa-2x"></i>
+              </a>
+              <a
+                href="https://www.linkedin.com"
+                target="_blank"
+                class="text-decoration-none me-3"
+              >
+                <i class="fab fa-linkedin fa-2x"></i>
+              </a>
+              <a
+                href="https://www.instagram.com"
+                target="_blank"
+                class="text-decoration-none"
+              >
+                <i class="fab fa-instagram fa-2x"></i>
+              </a>
+            </div>
+          </div>
+          <div class="col-md-3">
+            <h5>Quick Links</h5>
+            <ul class="list-unstyled">
+              <li>
+                <a href="dashboard.html" class="text-decoration-none"
+                  ><i class="fas fa-chevron-right"></i> Dashboard</a
+                >
+              </li>
+              <li>
+                <a href="internships.html" class="text-decoration-none"
+                  ><i class="fas fa-chevron-right"></i> My Internships</a
+                >
+              </li>
+              <li>
+                <a href="companies.html" class="text-decoration-none"
+                  ><i class="fas fa-chevron-right"></i> Companies</a
+                >
+              </li>
+            </ul>
+          </div>
+          <div class="col-md-3">
+            <h5>Contact</h5>
+            <ul class="list-unstyled">
+              <li>
+                <i class="fas fa-envelope"></i> support@internshiptracker.com.my
+              </li>
+              <li><i class="fas fa-phone"></i> +60 3-1234 5678</li>
+              <li>
+                <i class="fas fa-map-marker-alt"></i> Kuala Lumpur, Malaysia
+              </li>
+            </ul>
+          </div>
+        </div>
+        <div class="row mt-3">
+          <div class="col-12 text-center">
+            <div class="tricolor-footer mx-auto">
+              <div class="color-bar blue"></div>
+              <div class="color-bar silver"></div>
+              <div class="color-bar red"></div>
+            </div>
+            <p class="mb-0 mt-2">
+              &copy; 2025 Internship Tracker Malaysia. All rights reserved.
+            </p>
+          </div>
+        </div>
+      </div>
+    </footer>
+
+    <!-- Bootstrap 5 JS Bundle with Popper -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+
+    <!-- Sidebar & Theme Toggle Script -->
+    <script>
+      // Sidebar Toggle
+      const menuToggle = document.getElementById("menuToggle");
+      const sidebar = document.getElementById("sidebar");
+      const sidebarClose = document.getElementById("sidebarClose");
+      const sidebarOverlay = document.getElementById("sidebarOverlay");
+
+      menuToggle.addEventListener("click", () => {
+        sidebar.classList.add("active");
+        sidebarOverlay.classList.add("active");
+      });
+
+      sidebarClose.addEventListener("click", () => {
+        sidebar.classList.remove("active");
+        sidebarOverlay.classList.remove("active");
+      });
+
+      sidebarOverlay.addEventListener("click", () => {
+        sidebar.classList.remove("active");
+        sidebarOverlay.classList.remove("active");
+      });
+
+      // Dark Mode Toggle
+      const themeToggle = document.getElementById("themeToggle");
+      const themeLabel = document.getElementById("themeLabel");
+      const body = document.body;
+
+      // Load saved theme
+      const savedTheme = localStorage.getItem("theme");
+      if (savedTheme === "dark") {
+        body.classList.add("dark-mode");
+        themeToggle.checked = true;
+        themeLabel.textContent = "Light Mode";
+      }
+
+      themeToggle.addEventListener("change", () => {
+        if (themeToggle.checked) {
+          body.classList.add("dark-mode");
+          themeLabel.textContent = "Light Mode";
+          localStorage.setItem("theme", "dark");
+        } else {
+          body.classList.remove("dark-mode");
+          themeLabel.textContent = "Dark Mode";
+          localStorage.setItem("theme", "light");
+        }
+      });
+    </script>
+
+    <!-- Custom JS -->
+    <script src="js/script.js"></script>
+    <script>
+      // Chart 1: Donut Chart with Numbers Inside Segments
+      const donutCtx = document.getElementById("donutChart")?.getContext("2d");
+      if (donutCtx) {
+        const data = [7, 6, 2, 3];
+        const labels = ["Applied", "Interview", "Offer", "Rejected"];
+        const colors = ["#4e73df", "#1cc88a", "#36b9cc", "#e74a3b"];
+
+        const donutChart = new Chart(donutCtx, {
+          type: "doughnut",
+          data: {
+            labels: labels,
+            datasets: [
+              {
+                data: data,
+                backgroundColor: colors,
+                borderWidth: 2,
+                borderColor: "#fff",
+                hoverOffset: 15,
+              },
+            ],
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false, // let the .chart-container control height
+            layout: { padding: 6 },
+            cutout: "65%",
+            plugins: {
+              legend: {
+                display: false,
+              },
+              tooltip: {
+                callbacks: {
+                  label: function (context) {
+                    const label = context.label || "";
+                    const value = context.raw || 0;
+                    const total = context.dataset.data.reduce(
+                      (a, b) => a + b,
+                      0,
+                    );
+                    const percentage = Math.round((value / total) * 100);
+                    return `${label}: ${value} applications (${percentage}%)`;
+                  },
+                },
+              },
+            },
+          },
+          plugins: [
+            {
+              id: "doughnutLabels",
+              afterDraw: function (chart) {
+                const ctx = chart.ctx;
+
+                chart.data.datasets.forEach(function (dataset, i) {
+                  const meta = chart.getDatasetMeta(i);
+                  if (!meta.hidden) {
+                    meta.data.forEach(function (segment, index) {
+                      const model = segment.getCenterPoint();
+                      const text = chart.data.datasets[0].data[index];
+
+                      ctx.save();
+                      ctx.font = 'bold 16px "Segoe UI"';
+                      ctx.fillStyle = "#333";
+                      ctx.textAlign = "center";
+                      ctx.textBaseline = "middle";
+
+                      ctx.fillText(text, model.x, model.y);
+                      ctx.restore();
+                    });
+                  }
+                });
+              },
+            },
+          ],
+        });
+      }
+
+      // Chart 2: Line Chart
+      const lineChartEl = document.querySelector("#lineChart");
+      if (lineChartEl) {
+        const lineOptions = {
+          series: [
+            {
+              name: "Applications",
+              data: [4, 5, 3, 7, 8, 6, 10, 12, 9, 15, 11, 8],
+            },
+          ],
+          chart: {
+            height: 300,
+            type: "line",
+            zoom: {
+              enabled: false,
+            },
+            toolbar: {
+              show: false,
+            },
+          },
+          colors: ["#4e73df"],
+          dataLabels: {
+            enabled: false,
+          },
+          stroke: {
+            curve: "smooth",
+            width: 3,
+          },
+          title: {
+            text: "Monthly Applications 2025",
+            align: "left",
+            style: {
+              fontSize: "14px",
+              color: "#333",
+            },
+          },
+          grid: {
+            row: {
+              colors: ["#f3f3f3", "transparent"],
+              opacity: 0.5,
+            },
+          },
+          xaxis: {
+            categories: [
+              "Jan",
+              "Feb",
+              "Mar",
+              "Apr",
+              "May",
+              "Jun",
+              "Jul",
+              "Aug",
+              "Sep",
+              "Oct",
+              "Nov",
+              "Dec",
+            ],
+          },
+          yaxis: {
+            title: {
+              text: "Number of Applications",
+            },
+            min: 0,
+            max: 16,
+          },
+          markers: {
+            size: 5,
+            colors: ["#4e73df"],
+            strokeColors: "#fff",
+            strokeWidth: 2,
+          },
+        };
+
+        const lineChart = new ApexCharts(lineChartEl, lineOptions);
+        lineChart.render();
+      }
+
+      // Chart 3: Bar Chart
+      const barCtx = document.getElementById("barChart")?.getContext("2d");
+      if (barCtx) {
+        const barChart = new Chart(barCtx, {
+          type: "bar",
+          data: {
+            labels: ["Jan", "Feb", "Mar", "Apr", "May", "Jun"],
+            datasets: [
+              {
+                label: "Applied",
+                data: [5, 7, 3, 8, 6, 9],
+                backgroundColor: "#4e73df",
+                borderColor: "#4e73df",
+                borderWidth: 1,
+              },
+              {
+                label: "Interview",
+                data: [2, 3, 1, 4, 3, 5],
+                backgroundColor: "#1cc88a",
+                borderColor: "#1cc88a",
+                borderWidth: 1,
+              },
+              {
+                label: "Offer",
+                data: [1, 1, 0, 2, 1, 1],
+                backgroundColor: "#36b9cc",
+                borderColor: "#36b9cc",
+                borderWidth: 1,
+              },
+            ],
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: true,
+            scales: {
+              y: {
+                beginAtZero: true,
+                title: {
+                  display: true,
+                  text: "Number of Applications",
+                },
+              },
+              x: {
+                title: {
+                  display: true,
+                  text: "Months",
+                },
+              },
+            },
+            plugins: {
+              legend: {
+                position: "bottom",
+              },
+              title: {
+                display: true,
+                text: "Applications by Status (Jan-Jun 2025)",
+              },
+            },
+          },
+        });
+      }
+    </script>
+  </body>
+</html>
